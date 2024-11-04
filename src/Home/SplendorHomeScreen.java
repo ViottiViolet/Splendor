@@ -9,9 +9,9 @@ import java.awt.event.MouseEvent;
 
 public class SplendorHomeScreen extends JFrame {
 
-    private JLabel startLabel, infoLabel;
-    private ImageIcon startIcon, infoIcon;
-    private int initialWidth, initialHeight;
+    private final JLabel startLabel, infoLabel;
+    private final ImageIcon startIcon, infoIcon;
+    private final int initialWidth, initialHeight;
 
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
@@ -112,7 +112,7 @@ public class SplendorHomeScreen extends JFrame {
     }
 
     // Inner class to paint background image
-    class BackgroundPanel extends JPanel {
+    static class BackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);

@@ -1,3 +1,5 @@
+package Cards;
+
 import java.awt.image.BufferedImage;
 
 public class CardLoader {
@@ -15,5 +17,8 @@ public class CardLoader {
         this.cost = cost;
     }
 
-
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

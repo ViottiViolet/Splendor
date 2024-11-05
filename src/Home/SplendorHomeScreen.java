@@ -1,17 +1,19 @@
 package Home;
 
-import javax.swing.*;
+import Game.SplendorGameScreen;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
 
 public class SplendorHomeScreen extends JFrame {
 
     private final JLabel startLabel, infoLabel;
     private final ImageIcon startIcon, infoIcon;
     private final int initialWidth, initialHeight;
+    private static boolean infoVisible = false;
 
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
@@ -76,6 +78,8 @@ public class SplendorHomeScreen extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Info button clicked!");
+                infoVisible = !infoVisible;
+                System.out.println(infoVisible);
             }
         });
 
@@ -121,6 +125,8 @@ public class SplendorHomeScreen extends JFrame {
             super.paintComponent(g);
             ImageIcon bg = new ImageIcon("src/Images/StartMenu/back.jpeg");
             g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
+            ImageIcon info = new ImageIcon("src/Images/infoTemp.png");
+            if (infoVisible) g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
     }
 

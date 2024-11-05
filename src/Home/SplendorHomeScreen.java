@@ -55,6 +55,9 @@ public class SplendorHomeScreen extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Start button clicked!");
+                SplendorGameScreen gameScreen = new SplendorGameScreen();
+                gameScreen.setVisible(true);
+                dispose();
             }
         });
 

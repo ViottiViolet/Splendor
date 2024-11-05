@@ -1,13 +1,9 @@
 package Game;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
 
-public class SplendorGameScreen extends JFrame {
+public class SplendorGameScreen extends JFrame { 
 
   public SplendorGameScreen() {
     setTitle("Splendor Game");
@@ -16,6 +12,9 @@ public class SplendorGameScreen extends JFrame {
 
     BackgroundPanel panel = new BackgroundPanel();
     panel.setLayout(null); // Custom layout
+
+    add(panel);
+    setVisible(true);
   }
   
   // Inner class to paint background image
@@ -29,7 +28,7 @@ public class SplendorGameScreen extends JFrame {
   }
   
   public static void main(String[] args) {
-      //new SplendorGameScreen();
+      new SplendorGameScreen();
   }
 
-{
+}

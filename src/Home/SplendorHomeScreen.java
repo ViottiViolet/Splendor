@@ -10,9 +10,10 @@ import javax.swing.*;
 
 public class SplendorHomeScreen extends JFrame {
 
-    private final JLabel startLabel, infoLabel;
-    private final ImageIcon startIcon, infoIcon;
+    private final JLabel startLabel, infoLabel, infoCardLabel, xButtonLabel;
+    private final ImageIcon startIcon, infoIcon, info, x;
     private final int initialWidth, initialHeight;
+
     private static boolean infoVisible = false;
 
     public SplendorHomeScreen() {
@@ -25,14 +26,21 @@ public class SplendorHomeScreen extends JFrame {
 
         startIcon = new ImageIcon("src/Images/StartMenu/Start.png");
         infoIcon = new ImageIcon("src/Images/StartMenu/Info.png");
+        info = new ImageIcon("src/Images/infoTemp.png");
+        x = new ImageIcon("src/Images/xButtonTemp.png");
 
         initialWidth = (int) (startIcon.getIconWidth() * 0.35);
         initialHeight = (int) (startIcon.getIconHeight() * 0.34);
+
 
         startLabel = new JLabel(
                 new ImageIcon(startIcon.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
         infoLabel = new JLabel(
                 new ImageIcon(infoIcon.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
+        infoCardLabel = new JLabel(
+                new ImageIcon(info.getImage().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH)));
+        xButtonLabel = new JLabel(
+                new ImageIcon(x.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 
         // Dynamically adjust the position and size of the buttons based on screen size
         panel.addComponentListener(new ComponentAdapter() {
@@ -56,6 +64,7 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (infoVisible) return;
                 System.out.println("Start button clicked!");
                 SplendorGameScreen gameScreen = new SplendorGameScreen();
                 gameScreen.setVisible(true);
@@ -77,17 +86,52 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (infoVisible) return;
                 System.out.println("Info button clicked!");
                 infoVisible = !infoVisible;
-                System.out.println(infoVisible);
+                pack();
+                
+                infoCardLabel.setVisible(infoVisible);
+                xButtonLabel.setVisible(infoVisible);
             }
         });
 
+        xButtonLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //animateImage(xButtonLabel, true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //animateImage(xButtonLabel, false);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!infoVisible) return;
+                System.out.println("Info button clicked!");
+                infoVisible = !infoVisible;
+                pack();
+                
+                infoCardLabel.setVisible(infoVisible);
+                xButtonLabel.setVisible(infoVisible);
+            }
+        });
+
+        panel.add(xButtonLabel);
+        panel.add(infoCardLabel);
         panel.add(startLabel);
         panel.add(infoLabel);
 
         add(panel);
+        pack();
         setVisible(true);
+        infoCardLabel.setBounds(0, 0, getWidth(), getHeight());
+        infoCardLabel.setVisible(false);
+        xButtonLabel.setBounds(getWidth()-75, 10, 50, 50);
+        xButtonLabel.setVisible(false);
+
     }
 
     // Method to adjust button size and position based on window size
@@ -125,8 +169,6 @@ public class SplendorHomeScreen extends JFrame {
             super.paintComponent(g);
             ImageIcon bg = new ImageIcon("src/Images/StartMenu/back.jpeg");
             g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
-            ImageIcon info = new ImageIcon("src/Images/infoTemp.png");
-            if (infoVisible) g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
     }
 

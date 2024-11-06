@@ -1,6 +1,7 @@
 package Home;
 
 import Game.SplendorGameScreen;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -15,25 +16,26 @@ public class SplendorHomeScreen extends JFrame {
     private final int initialWidth, initialHeight;
     private static boolean infoVisible = false;
 
+
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(1200, 700));
-
+        setMinimumSize(new Dimension(1300, 800));
+    
         BackgroundPanel panel = new BackgroundPanel();
         panel.setLayout(null); // Custom layout
-
+    
         startIcon = new ImageIcon("src/Images/StartMenu/Start.png");
         infoIcon = new ImageIcon("src/Images/StartMenu/Info.png");
-
+    
         initialWidth = (int) (startIcon.getIconWidth() * 0.35);
         initialHeight = (int) (startIcon.getIconHeight() * 0.34);
-
+    
         startLabel = new JLabel(
                 new ImageIcon(startIcon.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
         infoLabel = new JLabel(
                 new ImageIcon(infoIcon.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
-
+    
         // Dynamically adjust the position and size of the buttons based on screen size
         panel.addComponentListener(new ComponentAdapter() {
             @Override
@@ -41,19 +43,19 @@ public class SplendorHomeScreen extends JFrame {
                 adjustButtonPosition(panel.getWidth(), panel.getHeight());
             }
         });
-
+    
         // Add hover effect with animation for the start button
         startLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 animateImage(startLabel, true);
             }
-
+    
             @Override
             public void mouseExited(MouseEvent e) {
                 animateImage(startLabel, false);
             }
-
+    
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Start button clicked!");
@@ -62,34 +64,35 @@ public class SplendorHomeScreen extends JFrame {
                 dispose();
             }
         });
-
+    
         // Add hover effect with animation for the info button
         infoLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 animateImage(infoLabel, true);
             }
-
+    
             @Override
             public void mouseExited(MouseEvent e) {
                 animateImage(infoLabel, false);
             }
-
+    
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Info button clicked!");
-                infoVisible = !infoVisible;
-                System.out.println(infoVisible);
             }
         });
-
+    
         panel.add(startLabel);
         panel.add(infoLabel);
-
+    
         add(panel);
+    
+        // Center the window on the screen
+        setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    
     // Method to adjust button size and position based on window size
     private void adjustButtonPosition(int panelWidth, int panelHeight) {
         int startButtonX = panelWidth / 2 - 125; // Center horizontally
@@ -125,6 +128,7 @@ public class SplendorHomeScreen extends JFrame {
             super.paintComponent(g);
             ImageIcon bg = new ImageIcon("src/Images/StartMenu/back.jpeg");
             g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
+            @SuppressWarnings("unused")
             ImageIcon info = new ImageIcon("src/Images/infoTemp.png");
             if (infoVisible) g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
         }

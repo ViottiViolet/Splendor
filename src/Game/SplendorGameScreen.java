@@ -8,7 +8,7 @@ public class SplendorGameScreen extends JFrame {
     public SplendorGameScreen() {
         setTitle("Splendor Game");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(1300, 800));
+        setMinimumSize(new Dimension(1500, 900));
 
         BackgroundPanel panel = new BackgroundPanel();
         panel.setLayout(null); // Custom layout
@@ -21,16 +21,12 @@ public class SplendorGameScreen extends JFrame {
     }
   
     // Inner class to paint background image
-    class BackgroundPanel extends JPanel {
+    static class BackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             ImageIcon bg = new ImageIcon("src/Images/GameMenu/GameBackground.png");
             g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
-    }
-  
-    public static void main(String[] args) {
-        new SplendorGameScreen();
     }
 }

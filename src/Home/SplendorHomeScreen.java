@@ -10,6 +10,7 @@ import javax.swing.*;
 
 public class SplendorHomeScreen extends JFrame {
 
+
     private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel;
     private final ImageIcon startButton, infoButton, exitBtn, infoCard;
     private final int initialWidth, initialHeight;
@@ -31,6 +32,7 @@ public class SplendorHomeScreen extends JFrame {
 
         initialWidth = (int) (startButton.getIconWidth() * 0.35);
         initialHeight = (int) (startButton.getIconHeight() * 0.34);
+
 
         startLabel = new JLabel(
                 new ImageIcon(
@@ -145,6 +147,11 @@ public class SplendorHomeScreen extends JFrame {
         // Center the window on the screen
         setLocationRelativeTo(null);
         setVisible(true);
+        infoCardLabel.setBounds(0, 0, getWidth(), getHeight());
+        infoCardLabel.setVisible(false);
+        xButtonLabel.setBounds(getWidth()-75, 10, 50, 50);
+        xButtonLabel.setVisible(false);
+
     }
 
     // Method to adjust button size and position based on window size

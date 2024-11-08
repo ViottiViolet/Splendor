@@ -28,7 +28,7 @@ public class SplendorHomeScreen extends JFrame {
         startButton = new ImageIcon("src/Images/StartMenu/Start.png");
         infoButton = new ImageIcon("src/Images/StartMenu/infoButton.png");
         ImageIcon infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
-        exitBtn = new ImageIcon("src/Images/StartMenu/Close.png");
+        exitBtn = new ImageIcon("src/Images/StartMenu/exitButton.png");
 
         initialWidth = (int) (startButton.getIconWidth() * 0.35);
         initialHeight = (int) (startButton.getIconHeight() * 0.34);

@@ -152,11 +152,11 @@ public class SplendorHomeScreen extends JFrame {
         int startButtonX = panelWidth / 2 - 125; // Center horizontally
         int startButtonY = panelHeight / 2 + 200; // Place slightly below center
 
-        int infoButtonX = panelWidth / 2 + 170; // Center horizontally
+        int infoButtonX = panelWidth / 2 + 275; // Center horizontally
         int infoButtonY = panelHeight / 2 - 200; // Place above the start button with a gap
 
         startLabel.setBounds(startButtonX, startButtonY, initialWidth, initialHeight);
-        infoLabel.setBounds(infoButtonX, infoButtonY, initialWidth, initialHeight);
+        infoLabel.setBounds(infoButtonX, infoButtonY, initialHeight, initialHeight);
     }
 
     // Method to animate the image enlarging and shrinking

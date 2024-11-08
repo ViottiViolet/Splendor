@@ -9,10 +9,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 public class SplendorHomeScreen extends JFrame {
-
-
     private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel;
-    private final ImageIcon startButton, infoButton, exitBtn, infoCard;
+    private final ImageIcon startButton;
+    private final ImageIcon infoButton;
+    private final ImageIcon exitBtn;
     private final int initialWidth, initialHeight;
 
     private static boolean infoVisible = false;
@@ -27,8 +27,8 @@ public class SplendorHomeScreen extends JFrame {
 
         startButton = new ImageIcon("src/Images/StartMenu/Start.png");
         infoButton = new ImageIcon("src/Images/StartMenu/infoButton.png");
-        infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
-        exitBtn = new ImageIcon("src/Images/StartMenu/exitButton.png");
+        ImageIcon infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
+        exitBtn = new ImageIcon("src/Images/StartMenu/Close.png");
 
         initialWidth = (int) (startButton.getIconWidth() * 0.35);
         initialHeight = (int) (startButton.getIconHeight() * 0.34);
@@ -39,7 +39,7 @@ public class SplendorHomeScreen extends JFrame {
                         startButton.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
         infoLabel = new JLabel(
                 new ImageIcon(
-                        infoButton.getImage().getScaledInstance(initialHeight, initialHeight, Image.SCALE_SMOOTH)));
+                        infoButton.getImage().getScaledInstance(initialHeight + 10, initialHeight, Image.SCALE_SMOOTH)));
         infoCardLabel = new JLabel(
                 new ImageIcon(infoCard.getImage().getScaledInstance(getWidth()-100, getHeight()-90,
                         Image.SCALE_SMOOTH)));
@@ -137,20 +137,13 @@ public class SplendorHomeScreen extends JFrame {
         add(panel);
         pack();
         setVisible(true);
+        setLocationRelativeTo(null);
 
         //setting the coordinates and bounds for the INFO PANEL elements
         infoCardLabel.setBounds(0, -10, getWidth(), getHeight()-10);
         infoCardLabel.setVisible(false);
         exitBtnLabel.setBounds(getWidth() - 75, 10, 50, 50);
         exitBtnLabel.setVisible(false);
-
-        // Center the window on the screen
-        setLocationRelativeTo(null);
-        setVisible(true);
-        infoCardLabel.setBounds(0, 0, getWidth(), getHeight());
-        infoCardLabel.setVisible(false);
-        xButtonLabel.setBounds(getWidth()-75, 10, 50, 50);
-        xButtonLabel.setVisible(false);
 
     }
 
@@ -182,7 +175,7 @@ public class SplendorHomeScreen extends JFrame {
         if (label == startLabel) {
             scaledImage = startButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         } else if (label == infoLabel) {
-            scaledImage = infoButton.getImage().getScaledInstance(newHeight, newHeight, Image.SCALE_SMOOTH);
+            scaledImage = infoButton.getImage().getScaledInstance(newHeight + 10, newHeight, Image.SCALE_SMOOTH);
         } else if (label == exitBtnLabel) {
             scaledImage = exitBtn.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         } else {

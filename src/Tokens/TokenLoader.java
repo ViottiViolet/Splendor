@@ -2,9 +2,6 @@ package Tokens;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
-import javax.swing.JButton;
-import java.io.*;
 public class TokenLoader extends JPanel {
     private String tokenType;
     private BufferedImage token;

@@ -1,6 +1,6 @@
 package Home;
 
-import Game.SplendorGameScreen;
+import Game.MainClass;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -68,12 +68,16 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (infoVisible)
+                if (infoVisible) {
                     return;
-                SplendorGameScreen gameScreen = new SplendorGameScreen();
-                gameScreen.setVisible(true);
-                dispose();
+                }
+                
+                // Call MainClass's main method to start the game screen
+                MainClass.main(new String[0]);
+                
+                dispose(); // Dispose the current window
             }
+            
         });
 
         // Add hover effect with animation for the info button

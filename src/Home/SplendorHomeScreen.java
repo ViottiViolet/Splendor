@@ -1,6 +1,6 @@
 package Home;
 
-import Game.SplendorGameScreen;
+import Game.MainClass;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -28,7 +28,7 @@ public class SplendorHomeScreen extends JFrame {
         startButton = new ImageIcon("src/Images/StartMenu/Start.png");
         infoButton = new ImageIcon("src/Images/StartMenu/infoButton.png");
         ImageIcon infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
-        exitBtn = new ImageIcon("src/Images/StartMenu/exitButton.png");
+        exitBtn = new ImageIcon("src/Images/StartMenu/Close.png");
 
         initialWidth = (int) (startButton.getIconWidth() * 0.35);
         initialHeight = (int) (startButton.getIconHeight() * 0.34);
@@ -68,12 +68,16 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (infoVisible)
+                if (infoVisible) {
                     return;
-                SplendorGameScreen gameScreen = new SplendorGameScreen();
-                gameScreen.setVisible(true);
-                dispose();
+                }
+                
+                // Call MainClass's main method to start the game screen
+                MainClass.main(new String[0]);
+                
+                dispose(); // Dispose the current window
             }
+            
         });
 
         // Add hover effect with animation for the info button
@@ -152,11 +156,11 @@ public class SplendorHomeScreen extends JFrame {
         int startButtonX = panelWidth / 2 - 125; // Center horizontally
         int startButtonY = panelHeight / 2 + 200; // Place slightly below center
 
-        int infoButtonX = panelWidth / 2 + 275; // Center horizontally
+        int infoButtonX = panelWidth / 2 + 170; // Center horizontally
         int infoButtonY = panelHeight / 2 - 200; // Place above the start button with a gap
 
         startLabel.setBounds(startButtonX, startButtonY, initialWidth, initialHeight);
-        infoLabel.setBounds(infoButtonX, infoButtonY, initialHeight, initialHeight);
+        infoLabel.setBounds(infoButtonX, infoButtonY, initialWidth, initialHeight);
     }
 
     // Method to animate the image enlarging and shrinking

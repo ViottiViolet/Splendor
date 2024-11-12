@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 public class TokenLoader extends JPanel {
     private String tokenType;
+    @SuppressWarnings("unused")
     private BufferedImage token;
+    @SuppressWarnings("unused")
     private int tokenNum;
     private final ImageIcon diamond, sapphire, emerald, ruby, onyx;
 

@@ -16,7 +16,7 @@ public class MainClass {
         frame.setLayout(new BorderLayout());
 
         // Initialize CardLoader with the path to the card data file
-        CardLoader cardLoader = new CardLoader("src/Cards/CardData.txt"); // Update with the actual path
+        CardLoader cardLoader = new CardLoader("C:/Coding/Kush Comp Sci 3/Splendor/src/Cards/CardData.txt"); // Update with the actual path
 
         // Create an instance of SplendorGameScreen with cardLoader and add it to the frame
         SplendorGameScreen gameScreen = new SplendorGameScreen(cardLoader);

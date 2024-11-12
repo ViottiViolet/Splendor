@@ -62,22 +62,6 @@ public class SplendorGameScreen extends JPanel {
             }
         });
     }
-<<<<<<< HEAD
-  
-    // Inner class to paint background image
-    static class BackgroundPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            ImageIcon bg = new ImageIcon("src/Images/GameMenu/GameBackground.png");
-            g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
-
-            g.setColor(new Color(0, 0, 0, 65));
-            g.fillRect(0, getHeight() - 200, getWidth(), 200); // Inventory space
-            g.fillRect(getWidth() / 2 - 400, 50, 800, 100); // Token space
-            g.fillRect(getWidth() / 2 - 500, 160, 850, 450); // Deck space
-            g.fillRect(getWidth() / 2 + 360, 160, 120, 450); // Nobles space
-=======
 
     private void addCardToGrid() {
         if (!level1Cards.isEmpty()) {
@@ -89,7 +73,6 @@ public class SplendorGameScreen extends JPanel {
         } else {
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
             gridPanel.add(emptyLabel);
->>>>>>> origin/Kush
         }
     }
 

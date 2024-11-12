@@ -16,13 +16,12 @@ public class Card {
     private final int rubyCost;
     private final int onyxCost;
 
-    // get each value of the card and create a card object
-    public Card(int level, int prestige, String illustration, int diamondBonus,
-            int sapphireBonus, int emeraldBonus, int rubyBonus, int onyxBonus,
-            int diamondCost, int sapphireCost, int emeraldCost, int rubyCost, int onyxCost) {
+    public Card(int level, int prestige, String illustration, int diamondBonus, int sapphireBonus, int emeraldBonus,
+            int rubyBonus, int onyxBonus, int diamondCost, int sapphireCost, int emeraldCost,
+            int rubyCost, int onyxCost) {
         this.level = level;
         this.prestige = prestige;
-        this.illustration = illustration;
+        this.illustration = "src/Images/Level" + level + "/" + illustration + ".png";
         this.diamondBonus = diamondBonus;
         this.sapphireBonus = sapphireBonus;
         this.emeraldBonus = emeraldBonus;
@@ -35,34 +34,23 @@ public class Card {
         this.onyxCost = onyxCost;
     }
 
-    // used to get the image of the card that we want to be drawn
-    public String getIllustration() {
-        return illustration;
-    }
-
-    // get the prestige of a card
     public int getPrestige() {
         return prestige;
     }
 
-    // we need to update this based on the gameplay that we will have
-    public String getBonus() {
-        if (diamondBonus > 0)
-            return "Diamond";
-        if (sapphireBonus > 0)
-            return "Sapphire";
-        if (emeraldBonus > 0)
-            return "Emerald";
-        if (rubyBonus > 0)
-            return "Ruby";
-        if (onyxBonus > 0)
-            return "Onyx";
-        return "None";
+    public int[] getBonus() {
+        int[] bonuses = { diamondBonus, sapphireBonus, emeraldBonus, rubyBonus, onyxBonus };
+        return bonuses;
     }
 
-    // template: update based on the way we will get the costs of the cards
-    public String getCosts() {
-        return "Diamond: " + diamondCost + ", Sapphire: " + sapphireCost + ", Emerald: " + emeraldCost + ", Ruby: "
-                + rubyCost + ", Onyx: " + onyxCost;
+    public int[] getCosts() {
+        ;
+        int[] costs = { diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost };
+        return costs;
+    }
+
+    // Method to get the illustration (image path) of the card
+    public String getIllustration() {
+        return illustration;
     }
 }

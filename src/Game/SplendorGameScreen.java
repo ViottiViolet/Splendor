@@ -11,51 +11,50 @@ import Cards.CardLoader;
 
 public class SplendorGameScreen extends JPanel {
     private ImageIcon bImageIcon;
-    private ImageIcon level1fd;
-    private Stack<Card> level1Cards;
+    private ImageIcon level1fd, level2fd, level3fd;
+    private Stack<Card> level1Cards, level2Cards, level3Cards;
     private JLabel selectedCardLabel;
-    private JPanel gridPanel;
+    private JPanel gridPanel1, gridPanel2, gridPanel3;
 
     private static final int GRID_WIDTH = 600;
     private static final int GRID_HEIGHT = 200;
     private static final int CARD_WIDTH = 120;
     private static final int CARD_HEIGHT = 180;
-    private static final float HOVER_SCALE = 1.1f;
+    private static final float HOVER_SCALE = 1.08f;
+    private static final int VERTICAL_GAP = 10;
 
     public SplendorGameScreen(CardLoader cardLoader) {
         bImageIcon = new ImageIcon("src/Images/GameMenu/GameBackground.png");
         level1fd = new ImageIcon("src/Images/Level1/L1BC.png");
+        level2fd = new ImageIcon("src/Images/Level2/L2BC.png");
+        level3fd = new ImageIcon("src/Images/Level3/L3BC.png");
 
-        // Load Level 1 cards from the CardLoader
+        // Load cards from the CardLoader
         level1Cards = cardLoader.getLevel1Cards();
+        level2Cards = cardLoader.getLevel2Cards();
+        level3Cards = cardLoader.getLevel3Cards();
+
+        // Shuffle all card decks
         Collections.shuffle(level1Cards);
+        Collections.shuffle(level2Cards);
+        Collections.shuffle(level3Cards);
 
         setLayout(null);
 
-        // Create a JPanel to hold the grid and set GridLayout
-        gridPanel = new JPanel(new GridLayout(1, 5, 5, 5)); // 5-pixel gap between columns
-        gridPanel.setOpaque(false);
+        // Create grid panels for each level
+        gridPanel1 = createLevelGrid(level1Cards, level1fd);
+        gridPanel2 = createLevelGrid(level2Cards, level2fd);
+        gridPanel3 = createLevelGrid(level1Cards, level3fd);
 
-        // Add level1fd image in the first column
-        ImageIcon scaledFdIcon = new ImageIcon(
-                level1fd.getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
-        JLabel level1fdLabel = new JLabel(scaledFdIcon);
-        gridPanel.add(level1fdLabel);
-
-        for (int i = 0; i < 4; i++) {
-            addCardToGrid();
-        }
-
-        add(gridPanel);
+        add(gridPanel1);
+        add(gridPanel2);
+        add(gridPanel3);
 
         // Handle panel resizing
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                int gridX = (getWidth() - GRID_WIDTH) / 2;
-                int gridY = (getHeight() - GRID_HEIGHT) / 2 - 250;
-                gridPanel.setBounds(gridX, gridY, GRID_WIDTH, GRID_HEIGHT);
-
+                updateGridPositions();
                 if (selectedCardLabel != null) {
                     updateSelectedCardPosition();
                 }
@@ -63,28 +62,53 @@ public class SplendorGameScreen extends JPanel {
         });
     }
 
-    private void addCardToGrid() {
-        if (!level1Cards.isEmpty()) {
-            Card card = level1Cards.pop();
+    private JPanel createLevelGrid(Stack<Card> cardStack, ImageIcon faceDown) {
+        JPanel grid = new JPanel(new GridLayout(1, 5, 5, 5));
+        grid.setOpaque(false);
+
+        // Add face-down deck image
+        ImageIcon scaledFdIcon = new ImageIcon(
+                faceDown.getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
+        JLabel faceDownLabel = new JLabel(scaledFdIcon);
+        grid.add(faceDownLabel);
+
+        // Add four cards from the deck
+        for (int i = 0; i < 4; i++) {
+            addCardToGrid(grid, cardStack);
+        }
+
+        return grid;
+    }
+
+    private void updateGridPositions() {
+        int gridX = (getWidth() - GRID_WIDTH) / 2;
+        
+        // Position grids vertically with spacing
+        gridPanel3.setBounds(gridX, 170, GRID_WIDTH, GRID_HEIGHT);
+        gridPanel2.setBounds(gridX, 160 + GRID_HEIGHT + VERTICAL_GAP, GRID_WIDTH, GRID_HEIGHT);
+        gridPanel1.setBounds(gridX, 140 + (GRID_HEIGHT + VERTICAL_GAP) * 2, GRID_WIDTH, GRID_HEIGHT);
+    }
+
+    private void addCardToGrid(JPanel grid, Stack<Card> cardStack) {
+        if (!cardStack.isEmpty()) {
+            Card card = cardStack.pop();
             ImageIcon cardImage = new ImageIcon(new ImageIcon(card.getIllustration())
                     .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
-            JLabel cardLabel = createClickableLabel(cardImage, card);
-            gridPanel.add(cardLabel);
+            JLabel cardLabel = createClickableLabel(cardImage, card, cardStack, grid);
+            grid.add(cardLabel);
         } else {
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
-            gridPanel.add(emptyLabel);
+            grid.add(emptyLabel);
         }
     }
 
-    private JLabel createClickableLabel(ImageIcon icon, Card card) {
+    private JLabel createClickableLabel(ImageIcon icon, Card card, Stack<Card> cardStack, JPanel grid) {
         JLabel label = new JLabel(icon) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g.create();
 
-                // Check if the mouse is hovering
                 if (getClientProperty("hovered") != null && (Boolean) getClientProperty("hovered")) {
-                    // Apply scaling transformation
                     double scale = HOVER_SCALE;
                     int w = getWidth();
                     int h = getHeight();
@@ -95,7 +119,6 @@ public class SplendorGameScreen extends JPanel {
                     g2d.scale(scale, scale);
                 }
 
-                // Draw the image
                 super.paintComponent(g2d);
                 g2d.dispose();
             }
@@ -106,7 +129,7 @@ public class SplendorGameScreen extends JPanel {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleCardClick(label, card);
+                handleCardClick(label, card, cardStack, grid);
             }
 
             @Override
@@ -125,11 +148,9 @@ public class SplendorGameScreen extends JPanel {
         return label;
     }
 
-    private void handleCardClick(JLabel clickedLabel, Card card) {
-        // Store the clicked card's image
+    private void handleCardClick(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
         ImageIcon clickedCardIcon = (ImageIcon) clickedLabel.getIcon();
 
-        // Remove previous selected card if it exists
         if (selectedCardLabel != null) {
             remove(selectedCardLabel);
         }
@@ -138,27 +159,23 @@ public class SplendorGameScreen extends JPanel {
         updateSelectedCardPosition();
         add(selectedCardLabel);
 
-        // Replace the clicked card with a new one from the deck
-        if (!level1Cards.isEmpty()) {
-            Card newCard = level1Cards.pop();
+        if (!cardStack.isEmpty()) {
+            Card newCard = cardStack.pop();
             ImageIcon newCardImage = new ImageIcon(new ImageIcon(newCard.getIllustration())
                     .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
 
-            // Create new clickable label for the new card
-            JLabel newCardLabel = createClickableLabel(newCardImage, newCard);
+            JLabel newCardLabel = createClickableLabel(newCardImage, newCard, cardStack, grid);
 
-            // Replace the old card with the new one
-            int index = gridPanel.getComponentZOrder(clickedLabel);
-            gridPanel.remove(index);
-            gridPanel.add(newCardLabel, index);
-            gridPanel.revalidate();
+            int index = grid.getComponentZOrder(clickedLabel);
+            grid.remove(index);
+            grid.add(newCardLabel, index);
+            grid.revalidate();
         } else {
-            // If no more cards, show empty slot
-            int index = gridPanel.getComponentZOrder(clickedLabel);
-            gridPanel.remove(index);
+            int index = grid.getComponentZOrder(clickedLabel);
+            grid.remove(index);
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
-            gridPanel.add(emptyLabel, index);
-            gridPanel.revalidate();
+            grid.add(emptyLabel, index);
+            grid.revalidate();
         }
 
         repaint();

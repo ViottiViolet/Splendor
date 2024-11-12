@@ -1,6 +1,7 @@
 package Cards;
 
 public class Card {
+    @SuppressWarnings("unused")
     private final int level;
     private final int prestige;
     private final String illustration;

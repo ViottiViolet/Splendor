@@ -44,7 +44,7 @@ public class SplendorGameScreen extends JPanel {
         // Create grid panels for each level
         gridPanel1 = createLevelGrid(level1Cards, level1fd);
         gridPanel2 = createLevelGrid(level2Cards, level2fd);
-        gridPanel3 = createLevelGrid(level1Cards, level3fd);
+        gridPanel3 = createLevelGrid(level3Cards, level3fd);
 
         add(gridPanel1);
         add(gridPanel2);

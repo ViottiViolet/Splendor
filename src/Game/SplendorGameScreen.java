@@ -13,6 +13,9 @@ public class SplendorGameScreen extends JPanel {
     private Stack<Card> level1Cards, level2Cards, level3Cards;
     private JPanel gridPanel1, gridPanel2, gridPanel3;
     private CardGridManager gridManager;
+    private ImageIcon rightArrow, leftArrow;
+    private JLabel rightArrowLabel, leftArrowLabel;
+    private static final int arrowWidth = 75;
 
     private static final int GRID_WIDTH = 700;
     private static final int GRID_HEIGHT = 200;
@@ -25,6 +28,15 @@ public class SplendorGameScreen extends JPanel {
         level1fd = new ImageIcon("src/Images/Level1/L1BC.png");
         level2fd = new ImageIcon("src/Images/Level2/L2BC.png");
         level3fd = new ImageIcon("src/Images/Level3/L3BC.png");
+        rightArrow = new ImageIcon("src/Images/MiscellaneousImages/RightArrow.png");
+        leftArrow = new ImageIcon("src/Images/MiscellaneousImages/LeftArrow.png");
+
+        rightArrowLabel = new JLabel(
+                new ImageIcon(
+                    rightArrow.getImage().getScaledInstance(arrowWidth, arrowWidth, Image.SCALE_SMOOTH)));
+        leftArrowLabel = new JLabel(
+                new ImageIcon(
+                        leftArrow.getImage().getScaledInstance(arrowWidth, arrowWidth, Image.SCALE_SMOOTH)));
 
         // Load cards from the CardLoader
         level1Cards = cardLoader.getLevel1Cards();
@@ -46,6 +58,11 @@ public class SplendorGameScreen extends JPanel {
         add(gridPanel1);
         add(gridPanel2);
         add(gridPanel3);
+        add(rightArrowLabel);
+        add(leftArrowLabel);
+
+        rightArrowLabel.setBounds(1750, 400, arrowWidth, arrowWidth);
+        leftArrowLabel.setBounds(50, 400, arrowWidth, arrowWidth);
 
         // Handle panel resizing
         addComponentListener(new java.awt.event.ComponentAdapter() {

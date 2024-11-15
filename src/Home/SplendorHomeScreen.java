@@ -54,9 +54,9 @@ public class SplendorHomeScreen extends JFrame {
         exitBtnLabel = new JLabel(
                 new ImageIcon(exitBtn.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         addLabel = new JLabel(
-                new ImageIcon(addButton.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH)));
+                new ImageIcon(addButton.getImage().getScaledInstance(80, 75, Image.SCALE_SMOOTH)));
         subtractLabel = new JLabel(
-                new ImageIcon(subtractButton.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH)));
+                new ImageIcon(subtractButton.getImage().getScaledInstance(70, 60, Image.SCALE_SMOOTH)));
 
         Font font = new Font("Algerian", Font.PLAIN, 35);
         textLabel = new JLabel(playerNum + "");
@@ -242,9 +242,9 @@ public class SplendorHomeScreen extends JFrame {
         } else if (label == exitBtnLabel) {
             scaledImage = exitBtn.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         } else if (label == addLabel) {
-            scaledImage = addButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            scaledImage = addButton.getImage().getScaledInstance(newWidth, newHeight - 10, Image.SCALE_SMOOTH);
         } else if (label == subtractLabel) {
-            scaledImage = subtractButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            scaledImage = subtractButton.getImage().getScaledInstance(newWidth - 10, newHeight - 20, Image.SCALE_SMOOTH);
         } else {
             return;
         }

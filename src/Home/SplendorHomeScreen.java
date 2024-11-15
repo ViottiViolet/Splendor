@@ -9,13 +9,17 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 
 public class SplendorHomeScreen extends JFrame {
-    private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel;
+    private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel, addLabel, subtractLabel, textLabel;
     private final ImageIcon startButton;
     private final ImageIcon infoButton;
+    private final ImageIcon infoCard;
     private final ImageIcon exitBtn;
+    private final ImageIcon addButton;
+    private final ImageIcon subtractButton;
     private final int initialWidth, initialHeight;
 
     private static boolean infoVisible = false;
+    private static int playerNum = 2;
 
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
@@ -27,8 +31,12 @@ public class SplendorHomeScreen extends JFrame {
 
         startButton = new ImageIcon("src/Images/StartMenu/Start.png");
         infoButton = new ImageIcon("src/Images/StartMenu/infoButton.png");
-        ImageIcon infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
+        infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
         exitBtn = new ImageIcon("src/Images/StartMenu/Close.png");
+        addButton = new ImageIcon("src/Images/StartMenu/Plus.png");
+        subtractButton = new ImageIcon("src/Images/StartMenu/Minus.png");
+
+        playerNum = 2;
 
         initialWidth = (int) (startButton.getIconWidth() * 0.35);
         initialHeight = (int) (startButton.getIconHeight() * 0.34);
@@ -45,6 +53,15 @@ public class SplendorHomeScreen extends JFrame {
                         Image.SCALE_SMOOTH)));
         exitBtnLabel = new JLabel(
                 new ImageIcon(exitBtn.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+        addLabel = new JLabel(
+                new ImageIcon(addButton.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH)));
+        subtractLabel = new JLabel(
+                new ImageIcon(subtractButton.getImage().getScaledInstance(65, 60, Image.SCALE_SMOOTH)));
+
+        Font font = new Font("Algerian", Font.PLAIN, 35);
+        textLabel = new JLabel(playerNum + "");
+        textLabel.setFont(font);
+        textLabel.setForeground(new Color(237, 220, 199));
 
         // Dynamically adjust the position and size of the buttons based on screen size
         panel.addComponentListener(new ComponentAdapter() {
@@ -132,11 +149,50 @@ public class SplendorHomeScreen extends JFrame {
             }
         });
 
+        addLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                animateImage(addLabel, true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                animateImage(addLabel, false);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (playerNum < 4) playerNum++;
+                textLabel.setText(playerNum + "");
+            }
+        });
+
+        subtractLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                animateImage(subtractLabel, true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                animateImage(subtractLabel, false);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (playerNum > 2) playerNum--;
+                textLabel.setText(playerNum + "");
+            }
+        });
+
         // adding the element to the screen
         panel.add(startLabel);
         panel.add(infoLabel);
         panel.add(exitBtnLabel);
         panel.add(infoCardLabel);
+        panel.add(addLabel);
+        panel.add(subtractLabel);
+        panel.add(textLabel);
 
         add(panel);
         pack();
@@ -149,6 +205,9 @@ public class SplendorHomeScreen extends JFrame {
         exitBtnLabel.setBounds(getWidth() - 75, 10, 50, 50);
         exitBtnLabel.setVisible(false);
 
+        addLabel.setBounds(getWidth() / 2 + 80, getHeight() / 2 + 100, 75, 75);
+        subtractLabel.setBounds(getWidth() / 2 - 150, getHeight() / 2 + 100, 75, 75);
+        textLabel.setBounds(getWidth() / 2 - 10, getHeight() / 2 + 100, 200, 75);
     }
 
     // Method to adjust button size and position based on window size
@@ -156,11 +215,11 @@ public class SplendorHomeScreen extends JFrame {
         int startButtonX = panelWidth / 2 - 125; // Center horizontally
         int startButtonY = panelHeight / 2 + 200; // Place slightly below center
 
-        int infoButtonX = panelWidth / 2 + 170; // Center horizontally
+        int infoButtonX = panelWidth / 2 + 280; // Center horizontally
         int infoButtonY = panelHeight / 2 - 200; // Place above the start button with a gap
 
         startLabel.setBounds(startButtonX, startButtonY, initialWidth, initialHeight);
-        infoLabel.setBounds(infoButtonX, infoButtonY, initialWidth, initialHeight);
+        infoLabel.setBounds(infoButtonX, infoButtonY, initialHeight, initialHeight);
     }
 
     // Method to animate the image enlarging and shrinking
@@ -182,6 +241,10 @@ public class SplendorHomeScreen extends JFrame {
             scaledImage = infoButton.getImage().getScaledInstance(newHeight + 10, newHeight, Image.SCALE_SMOOTH);
         } else if (label == exitBtnLabel) {
             scaledImage = exitBtn.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        } else if (label == addLabel) {
+            scaledImage = addButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        } else if (label == subtractLabel) {
+            scaledImage = subtractButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         } else {
             return;
         }
@@ -196,6 +259,8 @@ public class SplendorHomeScreen extends JFrame {
             super.paintComponent(g);
             ImageIcon bg = new ImageIcon("src/Images/StartMenu/back.jpeg");
             g.drawImage(bg.getImage(), 0, 0, getWidth(), getHeight(), this);
+            g.setColor(new Color(0, 0, 0, 175));
+            g.fillRect(getWidth() / 3 + 100, getHeight() / 2 + 135, getWidth() / 4 - 75, 40);
         }
     }
 

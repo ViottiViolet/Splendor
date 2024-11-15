@@ -14,11 +14,11 @@ public class TokenLoader extends JPanel {
         this.tokenType = tokenType;
         this.token = token;
         this.tokenNum = tokenNum;
-        diamond = new ImageIcon("src/images/diamond.png");
-        sapphire = new ImageIcon("src/images/sapphire.png");
-        emerald = new ImageIcon("src/images/emerald.png");
-        ruby = new ImageIcon("src/images/ruby.png");
-        onyx = new ImageIcon("src/images/onyx.png");
+        diamond = new ImageIcon("src/Images/Tokens/diamond.png");
+        sapphire = new ImageIcon("src/Images/Tokens/sapphire.png");
+        emerald = new ImageIcon("src/Images/Tokens/emerald.png");
+        ruby = new ImageIcon("src/Images/Tokens/ruby.png");
+        onyx = new ImageIcon("src/Images/Tokens/onyx.png");
     }
     public void highlightSelectedTokens(Graphics g, String tokenType){
         g.setColor(Color.yellow);

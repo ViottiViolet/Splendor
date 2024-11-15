@@ -8,11 +8,11 @@ import Cards.Card;
 import Cards.CardLoader;
 
 public class SplendorGameScreen extends JPanel {
-    private ImageIcon bImageIcon;
+    private final ImageIcon bImageIcon;
     private ImageIcon level1fd, level2fd, level3fd;
     private Stack<Card> level1Cards, level2Cards, level3Cards;
     private JPanel gridPanel1, gridPanel2, gridPanel3;
-    private CardGridManager gridManager;
+    private final CardGridManager gridManager;
 
     private static final int GRID_WIDTH = 700;
     private static final int GRID_HEIGHT = 200;

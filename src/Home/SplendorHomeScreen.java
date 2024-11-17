@@ -1,12 +1,13 @@
 package Home;
 
-import Game.MainClass;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
+
+import Game.Main.MainClass;
 
 public class SplendorHomeScreen extends JFrame {
     private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel, addLabel, subtractLabel, textLabel;
@@ -89,6 +90,7 @@ public class SplendorHomeScreen extends JFrame {
                     return;
                 }
 
+                MainClass.setPlayerCount(playerNum);
                 // Call MainClass's main method to start the game screen
                 MainClass.main(new String[0]);
 

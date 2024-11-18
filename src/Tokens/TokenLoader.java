@@ -1,58 +1,81 @@
 package Tokens;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-public class TokenLoader extends JPanel {
-    private String tokenType;
-    @SuppressWarnings("unused")
-    private BufferedImage token;
-    @SuppressWarnings("unused")
-    private int tokenNum;
-    private final ImageIcon diamond, sapphire, emerald, ruby, onyx;
+import java.util.EnumMap;
+import java.util.Map;
 
-    public TokenLoader(String tokenType, BufferedImage token, int tokenNum){
+public class TokenLoader extends JPanel {
+    public enum TokenType {
+        DIAMOND("diamond"),
+        SAPPHIRE("sapphire"),
+        EMERALD("emerald"),
+        RUBY("ruby"),
+        ONYX("onyx");
+
+        private final String filename;
+
+        TokenType(String filename) {
+            this.filename = filename;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+    }
+
+    private final TokenType tokenType;
+    private final BufferedImage token;
+    private final int tokenNum;
+    private final Map<TokenType, ImageIcon> tokenImages;
+    private static final int TOKEN_SIZE = 50;
+    private static final int BASE_X = 750;
+    private static final int BASE_Y = 650;
+    private static final int SPACING = 75;
+
+    public TokenLoader(TokenType tokenType, BufferedImage token, int tokenNum) {
         this.tokenType = tokenType;
         this.token = token;
         this.tokenNum = tokenNum;
-        diamond = new ImageIcon("src/Images/Tokens/diamond.png");
-        sapphire = new ImageIcon("src/Images/Tokens/sapphire.png");
-        emerald = new ImageIcon("src/Images/Tokens/emerald.png");
-        ruby = new ImageIcon("src/Images/Tokens/ruby.png");
-        onyx = new ImageIcon("src/Images/Tokens/onyx.png");
+
+        this.tokenImages = new EnumMap<>(TokenType.class);
+        for (TokenType type : TokenType.values()) {
+            String path = "src/Images/Tokens/" + type.getFilename() + ".png";
+            tokenImages.put(type, new ImageIcon(path));
+        }
     }
-    public void highlightSelectedTokens(Graphics g, String tokenType){
+
+    public void highlightSelectedTokens(Graphics g, TokenType tokenType) {
+        if (tokenType == null) return;
+
         g.setColor(Color.yellow);
-        if (tokenType == "Diamond") {
-            g.drawOval(getWidth() - 750, getHeight() - 650, diamond.getIconWidth(), diamond.getIconHeight());
-        }
-        if (tokenType == "Sapphire") {
-            g.drawOval(getWidth() - 675, getHeight() - 650, sapphire.getIconWidth(), sapphire.getIconHeight());
-        }
-        if(tokenType == "Emerald") {
-            g.drawOval(getWidth() - 600, getHeight() - 650, emerald.getIconWidth(), emerald.getIconHeight());
-        }
-        if(tokenType == "Ruby") {
-            g.drawOval(getWidth() - 525, getHeight() - 650, ruby.getIconWidth(), ruby.getIconHeight());
-        }
-        if(tokenType == "Onyx") {
-            g.drawOval(getWidth() - 450, getHeight() - 650, onyx.getIconWidth(), onyx.getIconHeight());
+        ImageIcon icon = tokenImages.get(tokenType);
+        if (icon != null) {
+            int xPos = getWidth() - BASE_X + getTokenXOffset(tokenType);
+            int yPos = getHeight() - BASE_Y;
+            g.drawOval(xPos, yPos, icon.getIconWidth(), icon.getIconHeight());
         }
     }
-    public void drawTokens(Graphics g){
-        if(tokenType == "Diamond"){
-            g.drawImage(diamond.getImage(), getWidth()-750, getHeight()-650, 50, 50, null);
+
+    public void drawTokens(Graphics g) {
+        if (tokenType == null) return;
+
+        ImageIcon icon = tokenImages.get(tokenType);
+        if (icon != null) {
+            int xPos = getWidth() - BASE_X + getTokenXOffset(tokenType);
+            int yPos = getHeight() - BASE_Y;
+            g.drawImage(icon.getImage(), xPos, yPos, TOKEN_SIZE, TOKEN_SIZE, null);
         }
-        if(tokenType == "Sapphire"){
-            g.drawImage(emerald.getImage(), getWidth()-675, getHeight()-650, 50, 50, null);
-        }
-        if(tokenType == "Emerald"){
-            g.drawImage(ruby.getImage(), getWidth()-600, getHeight()-650, 50, 50, null);
-        }
-        if(tokenType == "Ruby"){
-            g.drawImage(onyx.getImage(), getWidth()-525, getHeight()-650, 50, 50, null);
-        }
-        if(tokenType == "Onyx"){
-            g.drawImage(onyx.getImage(), getWidth()-450, getHeight()-650, 50, 50, null);
-        }
+    }
+
+    private int getTokenXOffset(TokenType type) {
+        return type.ordinal() * SPACING;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawTokens(g);
     }
 }

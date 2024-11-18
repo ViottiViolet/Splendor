@@ -1,11 +1,10 @@
-package Game;
+package Cards;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Stack;
-import Cards.Card;
 
 public class CardGridManager {
     private static final int CARD_WIDTH = 120;

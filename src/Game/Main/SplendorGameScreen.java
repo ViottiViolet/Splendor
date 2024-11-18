@@ -1,4 +1,4 @@
-package Game;
+package Game.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Stack;
 import Cards.Card;
 import Cards.CardLoader;
+import Cards.CardGridManager;
 
 public class SplendorGameScreen extends JPanel {
     private ImageIcon bImageIcon;

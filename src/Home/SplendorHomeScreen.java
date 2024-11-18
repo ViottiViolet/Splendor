@@ -1,6 +1,6 @@
 package Home;
 
-import Game.MainClass;
+import Game.Main.MainClass;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;

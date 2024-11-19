@@ -53,4 +53,16 @@ public class Card {
     public String getIllustration() {
         return illustration;
     }
+
+    public String getGem() {
+        // Check bonus values to determine which gem type this card represents
+        int[] bonuses = getBonus();
+        if (bonuses[0] == 1) return "diamond";
+        if (bonuses[1] == 1) return "sapphire";
+        if (bonuses[2] == 1) return "emerald";
+        if (bonuses[3] == 1) return "ruby";
+        if (bonuses[4] == 1) return "onyx";
+        return "none";  // Return "none" if no bonus is present
+    }
+
 }

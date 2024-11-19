@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Stack;
-
 public class CardLoader {
     private Stack<Card> level1Cards = new Stack<>();
     private Stack<Card> level2Cards = new Stack<>();

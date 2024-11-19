@@ -8,6 +8,7 @@ import Cards.Card;
 import Cards.CardGridManager;
 import Cards.CardLoader;
 import Game.Inventory.CycleInventory;
+import Game.Inventory.ReserveInventory;
 import Game.Inventory.TokenInventory;
 import Game.Token.TokenManager;
 
@@ -30,9 +31,9 @@ public class SplendorGameScreen extends JPanel {
     private static final int TOKEN_PANEL_HEIGHT = 100;
     @SuppressWarnings("unused")
     private final int playerCount;
-
-
     private JLabel playerNumberLabel;
+
+    private ReserveInventory reserveInventory;
 
     public SplendorGameScreen(CardLoader cardLoader, int playerCount) {
         this.playerCount = playerCount;
@@ -78,10 +79,10 @@ public class SplendorGameScreen extends JPanel {
         // In SplendorGameScreen constructor, update the listener to match your interface:
         cycleInventory.addPlayerChangeListener(newInventory -> {
             int currentPlayerIndex = cycleInventory.getCurrentPlayerIndex();
-            tokenManager.setCurrentPlayerInventory(newInventory, cycleInventory.getCurrentPlayerIndex());
-            updateTotalTokensLabel(tokenManager.getPlayerTokenCount(cycleInventory.getCurrentPlayerIndex()));
+            tokenManager.setCurrentPlayerInventory(newInventory, currentPlayerIndex);
+            updateTotalTokensLabel(tokenManager.getPlayerTokenCount(currentPlayerIndex));
             playerNumberLabel.setText("Player " + (currentPlayerIndex + 1));
-
+            reserveInventory.switchToPlayer(currentPlayerIndex); // Use switchToPlayer instead of resetForNewPlayer
         });
 
         playerNumberLabel = new JLabel("Player 1");
@@ -93,6 +94,10 @@ public class SplendorGameScreen extends JPanel {
         // Add it to the panel
         this.add(playerNumberLabel);
 
+        reserveInventory = new ReserveInventory();
+        add(reserveInventory);
+        
+        // Update the updateGridPositions method to include reserve inventory positioning
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -127,6 +132,10 @@ public class SplendorGameScreen extends JPanel {
         totalTokensLabel.setBounds(inventoryX, inventoryY - 30, TOKEN_INVENTORY_WIDTH, 25);
         
         cycleInventory.setBounds(inventoryX, inventoryY, TOKEN_INVENTORY_WIDTH, TOKEN_INVENTORY_HEIGHT);
+
+        int reserveX = (getWidth() - TOKEN_INVENTORY_WIDTH) / 2;
+        int reserveY = cycleInventory.getY() + cycleInventory.getHeight() + 10;
+        reserveInventory.setBounds(reserveX, reserveY, 320, 170);
     }
 
     public TokenInventory getPlayerInventory() {
@@ -137,5 +146,17 @@ public class SplendorGameScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(bImageIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+    }
+
+    public ReserveInventory getReserveInventory() {
+        return reserveInventory;
+    }
+
+    public TokenManager getTokenManager() {
+        return tokenManager;
+    }
+    
+    public TokenInventory getCurrentPlayerInventory() {
+        return cycleInventory.getInventory();
     }
 }

@@ -1,6 +1,12 @@
 package Cards;
 
 import javax.swing.*;
+
+import Game.Inventory.ReserveInventory;
+import Game.Inventory.TokenInventory;
+import Game.Main.SplendorGameScreen;
+import Game.Token.TokenManager;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -90,21 +96,100 @@ public class CardGridManager {
     }
 
     private void handleCardClick(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
-        ImageIcon clickedCardIcon = (ImageIcon) clickedLabel.getIcon();
+        String[] options = { "Buy", "Reserve", "Cancel" };
+        int choice = JOptionPane.showOptionDialog(grid,
+                "What would you like to do with this card?",
+                "Card Action",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
 
-        if (selectedCardLabel != null) {
-            // Remove from parent container
-            Container parent = selectedCardLabel.getParent();
-            if (parent != null) {
-                parent.remove(selectedCardLabel);
-                parent.repaint();
-            }
+        if (choice == 0) { // Buy
+            handleBuyCard(clickedLabel, card, cardStack, grid);
+        } else if (choice == 1) { // Reserve
+            handleReserveCard(clickedLabel, card, cardStack, grid);
+        }
+    }
+
+    private void handleBuyCard(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
+        // Get reference to SplendorGameScreen
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
         }
 
-        selectedCardLabel = new JLabel(clickedCardIcon);
-        updateSelectedCardPosition(selectedCardLabel, grid.getParent());
-        grid.getParent().add(selectedCardLabel);
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            TokenInventory tokenInventory = gameScreen.getPlayerInventory();
 
+            // Map card gem type to token color
+            String tokenColor = mapGemToTokenColor(card.getGem());
+
+            // Add bonus to player's inventory
+            if (tokenColor != null) {
+                tokenInventory.addBonus(tokenColor);
+            }
+
+            // Replace the card in the grid with a new one
+            replaceCardInGrid(clickedLabel, cardStack, grid);
+        }
+    }
+
+    private String mapGemToTokenColor(String gemType) {
+        return switch (gemType.toLowerCase()) {
+            case "diamond" -> "white";
+            case "sapphire" -> "blue";
+            case "onyx" -> "black";
+            case "ruby" -> "red";
+            case "emerald" -> "green";
+            default -> null;
+        };
+    }
+
+    private void handleReserveCard(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
+        // Get reference to SplendorGameScreen
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            ReserveInventory reserveInventory = gameScreen.getReserveInventory();
+
+            if (reserveInventory.canReserveCard()) {
+                // Get TokenManager and TokenInventory from gameScreen
+                TokenManager tokenManager = gameScreen.getTokenManager();
+                TokenInventory tokenInventory = gameScreen.getPlayerInventory(); // Use getPlayerInventory instead
+
+                // Check if gold tokens are available
+                if (tokenManager.getTokenCount("gold") > 0) {
+                    // Add gold token to player's inventory
+                    tokenInventory.addToken("gold");
+                    // Decrease gold token count in token manager
+                    tokenManager.decrementToken("gold");
+                    // Add card to reserve
+                    reserveInventory.addReservedCard(card);
+                    // Replace the card in grid
+                    replaceCardInGrid(clickedLabel, cardStack, grid);
+                } else {
+                    JOptionPane.showMessageDialog(grid,
+                            "No gold tokens available for reserving a card!",
+                            "Cannot Reserve",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(grid,
+                        "Maximum reserve limit reached!",
+                        "Cannot Reserve",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    private void replaceCardInGrid(JLabel clickedLabel, Stack<Card> cardStack, JPanel grid) {
         if (!cardStack.isEmpty()) {
             Card newCard = cardStack.pop();
             ImageIcon newCardImage = new ImageIcon(new ImageIcon(newCard.getIllustration())

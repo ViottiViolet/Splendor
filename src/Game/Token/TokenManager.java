@@ -8,6 +8,7 @@ import Game.Main.SplendorGameScreen;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ public class TokenManager {
     private final Map<String, ImageIcon> normalIcons;
     private final Map<String, ImageIcon> hoverIcons;
     private final JPanel tokenPanel;
+    private final JLabel resetLabel;
+    private final JLabel confirmLabel;
 
     private static final int TOKEN_SIZE = 70;
     private static final int TOKEN_SPACING = 10;
@@ -32,10 +35,11 @@ public class TokenManager {
 
     private TokenInventory currentPlayerInventory;
 
-    private SplendorGameScreen gameScreen; // Add reference to game screen
+    private final SplendorGameScreen gameScreen; // Add reference to game screen
     private int totalTokenCount = 0; // Track total tokens
     private static final int MAX_TOKENS = 10;
     private final Map<Integer, Integer> playerTokenCounts; // Store token counts for each player
+    private final ArrayList<String> tokensTakenInTurn;
     private int currentPlayer = 0; // Track current player
 
     public TokenManager(int playerCount, SplendorGameScreen gameScreen) {
@@ -48,6 +52,7 @@ public class TokenManager {
         tokenPanel = new JPanel(null);
         tokenPanel.setOpaque(false);
         this.playerTokenCounts = new HashMap<>();
+        tokensTakenInTurn = new ArrayList<>();
         // Initialize token counts for each player
         for (int i = 0; i < playerCount; i++) {
             playerTokenCounts.put(i, 0);
@@ -79,6 +84,53 @@ public class TokenManager {
             tokenCounts.put(color, countLabel);
             tokenPanel.add(countLabel);
         }
+
+        // Create reset button
+        resetLabel = new JLabel("reset");
+        resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        resetLabel.setForeground(Color.WHITE);
+        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 50, 25);
+        tokenPanel.add(resetLabel);
+
+        resetLabel.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+
+            public void mouseClicked(MouseEvent e) {
+                if (!tokensTakenInTurn.isEmpty()) resetPick();
+            }
+        });
+
+        confirmLabel = new JLabel("confirm");
+        confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        confirmLabel.setForeground(Color.WHITE);
+        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 75, 25);
+        tokenPanel.add(confirmLabel);
+
+        confirmLabel.addMouseListener(new MouseAdapter() {
+
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+
+            public void mouseClicked(MouseEvent e) {
+                tokensTakenInTurn.removeAll(tokensTakenInTurn);
+            }
+        });
     }
 
     public void setCurrentPlayerInventory(TokenInventory inventory, int playerIndex) {
@@ -228,16 +280,52 @@ public class TokenManager {
                     return;
                 }
 
+                if (tokensTakenInTurn.size() == 3)
+                {
+                    JOptionPane.showMessageDialog(
+                            tokenPanel,
+                            "Cannot choose more tokens. Can only pick 2 identical tokens or 3 different tokens. Please reset tokens.",
+                            "Token Limit Reached",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+
+                if (tokensTakenInTurn.size() == 2 && tokensTakenInTurn.get(0).equals(tokensTakenInTurn.get(1)))
+                {
+                    JOptionPane.showMessageDialog(
+                            tokenPanel,
+                            "Cannot choose more tokens. Can only pick 2 identical tokens or 3 different tokens. Please reset tokens.",
+                            "Token Limit Reached",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+
+                if (tokensTakenInTurn.contains(color))
+                {
+
+                    if (tokensTakenInTurn.size()!=2)
+                    {
+                        takeToken(color);
+                        return;
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(
+                                tokenPanel,
+                                "Cannot choose more tokens. Can only pick 2 identical tokens or 3 different tokens. Please reset tokens.",
+                                "Token Limit Reached",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                        return;
+                    }
+
+                }
+
                 if (currentPlayerInventory != null && availableTokens.get(color) > 0) {
                     if (canTakeToken(color)) {
-                        decrementToken(color);
-                        currentPlayerInventory.addToken(color);
-                        totalTokenCount++;
-                        // Store the updated count for the current player
-                        playerTokenCounts.put(currentPlayer, totalTokenCount);
-                        gameScreen.updateTotalTokensLabel(totalTokenCount);
-                        updateCountLabel(color, availableTokens.get(color));
-                        tokenPanel.repaint();
+                        takeToken(color);
                     }
                 }
             }
@@ -258,11 +346,37 @@ public class TokenManager {
         }
 
         // Rule 3: Player can't have more than 10 tokens total
-        if (totalTokenCount >= MAX_TOKENS) {
-            return false;
-        }
+        return totalTokenCount < MAX_TOKENS;
+    }
 
-        return true;
+    private void takeToken(String color)
+    {
+        decrementToken(color);
+        tokensTakenInTurn.add(color);
+        currentPlayerInventory.addToken(color);
+        totalTokenCount++;
+        // Store the updated count for the current player
+        playerTokenCounts.put(currentPlayer, totalTokenCount);
+        gameScreen.updateTotalTokensLabel(totalTokenCount);
+        updateCountLabel(color, availableTokens.get(color));
+        tokenPanel.repaint();
+    }
+
+    private void resetPick()
+    {
+        String color = "";
+        while(!tokensTakenInTurn.isEmpty())
+        {
+            color = tokensTakenInTurn.remove(0);
+
+            incrementToken(color);
+            updateCountLabel(color, availableTokens.get(color));
+
+            currentPlayerInventory.removeToken(color);
+            totalTokenCount--;
+            playerTokenCounts.put(currentPlayer, totalTokenCount);
+            gameScreen.updateTotalTokensLabel(totalTokenCount);
+        }
     }
 
     public void updateTokenPositions(int containerWidth) {

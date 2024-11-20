@@ -10,6 +10,7 @@ import Game.Token.TokenManager;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class CardGridManager {
@@ -124,8 +125,48 @@ public class CardGridManager {
             SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
             TokenInventory tokenInventory = gameScreen.getPlayerInventory();
 
+
+            int[] tempTokens = new int[]{
+                    tokenInventory.getTokenCount("white"),
+                    tokenInventory.getTokenCount("blue"),
+                    tokenInventory.getTokenCount("green"),
+                    tokenInventory.getTokenCount("red"),
+                    tokenInventory.getTokenCount("black"),
+            };
+            int[] temp = card.getCosts();
+            int i = 0;
+            for (String color : new String[]{"white", "blue", "green", "red", "black"})
+            {
+                temp[i] -= tokenInventory.getBonusCount(color);
+                while (temp[i] > 0 && tempTokens[i] > 0)
+                {
+                    tempTokens[i]--;
+                    temp[i]--;
+                }
+                if (temp[i] < 0) temp[i] = 0;
+                i++;
+            }
+            if (!Arrays.equals(temp, new int[]{0, 0, 0, 0, 0}))
+            {
+                JOptionPane.showMessageDialog(
+                        grid,
+                        "You do not have enough tokens or bonuses to purchase this card.",
+                        "Not Enough Tokens",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
             // Map card gem type to token color
             String tokenColor = mapGemToTokenColor(card.getGem());
+
+            // removes tokens from player inventory to buy card and adds bonuses back
+            i=0;
+            for (String color : new String[]{"white", "blue", "green", "red", "black"})
+            {
+                tokenInventory.removeToken(color, card.getCosts()[i++]);
+                tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
+            }
 
             // Add bonus to player's inventory
             if (tokenColor != null) {

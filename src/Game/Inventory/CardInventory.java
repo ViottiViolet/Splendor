@@ -1,5 +1,9 @@
+package Game.Inventory;
+
+import javax.swing.*;
+
 public class CardInventory extends JPanel {
-    private static final int CARD_WIDTH = 80;
+    /*private static final int CARD_WIDTH = 80;
     private static final int CARD_HEIGHT = 120;
     private static final int CORNER_RADIUS = 15;
     private static final float BORDER_THICKNESS = 2.0f;
@@ -169,5 +173,5 @@ public class CardInventory extends JPanel {
         g2d.draw(roundedRect);
         g2d.setColor(new Color(0, 0, 0, 30));
         g2d.setStroke(new BasicStroke(1.0f));
-        g2d.drawRoundRect(3, 3, width - 6, height - 6, CORNER_RADIUS - 2, CORNER_RADIUS - 2);
+        g2d.drawRoundRect(3, 3, width - 6, height - 6, CORNER_RADIUS - 2, CORNER_RADIUS - 2);*/
     }

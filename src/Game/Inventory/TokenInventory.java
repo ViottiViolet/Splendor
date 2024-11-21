@@ -60,10 +60,24 @@ public class TokenInventory extends JPanel {
         repaint();
     }
 
+    public void addToken(String color, int i) {
+        Map<String, Integer> currentPlayerTokens = playerTokens.get(currentPlayerIndex);
+        currentPlayerTokens.put(color, currentPlayerTokens.get(color) + i);
+        repaint();
+    }
+
     public void removeToken(String color) {
         Map<String, Integer> currentPlayerTokens = playerTokens.get(currentPlayerIndex);
         if (currentPlayerTokens.get(color) > 0) {
             currentPlayerTokens.put(color, currentPlayerTokens.get(color) - 1);
+            repaint();
+        }
+    }
+
+    public void removeToken(String color, int i) {
+        Map<String, Integer> currentPlayerTokens = playerTokens.get(currentPlayerIndex);
+        if (currentPlayerTokens.get(color) > 0) {
+            currentPlayerTokens.put(color, currentPlayerTokens.get(color) - i);
             repaint();
         }
     }
@@ -82,6 +96,9 @@ public class TokenInventory extends JPanel {
 
     public int getTokenCount(String color) {
         return playerTokens.get(currentPlayerIndex).get(color);
+    }
+    public int getBonusCount(String color) {
+        return playerBonuses.get(currentPlayerIndex).get(color);
     }
 
     public int getCurrentPlayerIndex() {

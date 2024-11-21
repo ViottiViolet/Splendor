@@ -1,6 +1,8 @@
 package Home;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -10,17 +12,61 @@ import javax.swing.*;
 import Game.Main.MainClass;
 
 public class SplendorHomeScreen extends JFrame {
-    private final JLabel startLabel, infoLabel, infoCardLabel, exitBtnLabel, addLabel, subtractLabel, textLabel;
-    private final ImageIcon startButton;
+    private final JLabel infoLabel, infoCardLabel, exitBtnLabel, addLabel, subtractLabel, textLabel;
     private final ImageIcon infoButton;
     private final ImageIcon infoCard;
     private final ImageIcon exitBtn;
     private final ImageIcon addButton;
     private final ImageIcon subtractButton;
+    @SuppressWarnings("unused")
     private final int initialWidth, initialHeight;
+    private TransitionOverlay transitionOverlay;
 
     private static boolean infoVisible = false;
     private static int playerNum = 2;
+
+    // Transition Overlay class
+    private class TransitionOverlay extends JPanel {
+        private float opacity = 0.0f;
+        private final Timer fadeTimer;
+
+        public TransitionOverlay() {
+            setOpaque(false);
+            setBackground(Color.WHITE);
+
+            // Create a timer for smooth fade-out
+            fadeTimer = new Timer(20, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    opacity += 0.03f;
+                    if (opacity >= 1.0f) {
+                        // Start the game after full fade
+                        SwingUtilities.invokeLater(() -> {
+                            MainClass.setPlayerCount(playerNum);
+                            MainClass.main(new String[0]);
+                            dispose();
+                        });
+                        fadeTimer.stop();
+                    }
+                    repaint();
+                }
+            });
+        }
+
+        public void startFadeOut() {
+            fadeTimer.start();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setComposite(AlphaComposite.SrcOver.derive(opacity));
+            g2d.setColor(getBackground());
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+            g2d.dispose();
+        }
+    }
 
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
@@ -30,21 +76,22 @@ public class SplendorHomeScreen extends JFrame {
         BackgroundPanel panel = new BackgroundPanel();
         panel.setLayout(null); // Custom layout
 
-        startButton = new ImageIcon("src/Images/StartMenu/Start.png");
+        // Create transition overlay
+        transitionOverlay = new TransitionOverlay();
+        transitionOverlay.setVisible(false);
+        transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
+
+        // Load image icons
         infoButton = new ImageIcon("src/Images/StartMenu/infoButton.png");
         infoCard = new ImageIcon("src/Images/StartMenu/Rules.png");
         exitBtn = new ImageIcon("src/Images/StartMenu/Close.png");
         addButton = new ImageIcon("src/Images/StartMenu/Plus.png");
         subtractButton = new ImageIcon("src/Images/StartMenu/Minus.png");
 
-        playerNum = 2;
+        initialWidth = (int) (addButton.getIconWidth() * 0.35);
+        initialHeight = (int) (addButton.getIconHeight() * 0.34);
 
-        initialWidth = (int) (startButton.getIconWidth() * 0.35);
-        initialHeight = (int) (startButton.getIconHeight() * 0.34);
-
-        startLabel = new JLabel(
-                new ImageIcon(
-                        startButton.getImage().getScaledInstance(initialWidth, initialHeight, Image.SCALE_SMOOTH)));
+        // Create labels
         infoLabel = new JLabel(
                 new ImageIcon(
                         infoButton.getImage().getScaledInstance(initialHeight + 10, initialHeight,
@@ -59,47 +106,40 @@ public class SplendorHomeScreen extends JFrame {
         subtractLabel = new JLabel(
                 new ImageIcon(subtractButton.getImage().getScaledInstance(70, 60, Image.SCALE_SMOOTH)));
 
+        // Player count label
         Font font = new Font("Algerian", Font.PLAIN, 35);
         textLabel = new JLabel(playerNum + "");
         textLabel.setFont(font);
         textLabel.setForeground(new Color(237, 220, 199));
+
+        JLabel startLabel = new JLabel("Click anywhere to start");
+        startLabel.setFont(font);
+        startLabel.setForeground(new Color(237, 220, 199));
+        startLabel.setBounds(getWidth()/2 - 225, getHeight()/2 + 200, 475, 100);
 
         // Dynamically adjust the position and size of the buttons based on screen size
         panel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 adjustButtonPosition(panel.getWidth(), panel.getHeight());
+                // Update transition overlay size
+                transitionOverlay.setBounds(0, 0, panel.getWidth(), panel.getHeight());
             }
         });
 
-        // Add hover effect with animation for the start button
-        startLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                animateImage(startLabel, true);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                animateImage(startLabel, false);
-            }
-
+        // Add global mouse listener to start the game when clicked (except on info
+        // button)
+        panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (infoVisible) {
-                    return;
+                // Check if we're not on the info button or in info view
+                if (!infoVisible && !isMouseOverInfoButton(e)) {
+                    startGameWithTransition();
                 }
-
-                MainClass.setPlayerCount(playerNum);
-                // Call MainClass's main method to start the game screen
-                MainClass.main(new String[0]);
-
-                dispose(); // Dispose the current window
             }
-
         });
 
-        // Add hover effect with animation for the info button
+        // Info button functionality
         infoLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -117,15 +157,14 @@ public class SplendorHomeScreen extends JFrame {
                     return;
                 infoVisible = true;
 
-                // Show the info card and close button, hide start and info labels
+                // Show the info card and close button, hide info button
                 infoCardLabel.setVisible(true);
                 exitBtnLabel.setVisible(true);
-                startLabel.setVisible(false);
                 infoLabel.setVisible(false);
             }
         });
 
-        // Add hover effect with animation for the close button
+        // Close button for info card
         exitBtnLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -143,14 +182,14 @@ public class SplendorHomeScreen extends JFrame {
                     return;
                 infoVisible = false;
 
-                // Hide the info card and close button, show start and info labels again
+                // Hide the info card and close button, show info button again
                 infoCardLabel.setVisible(false);
                 exitBtnLabel.setVisible(false);
-                startLabel.setVisible(true);
                 infoLabel.setVisible(true);
             }
         });
 
+        // Add player count buttons
         addLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -164,7 +203,8 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (playerNum < 4) playerNum++;
+                if (playerNum < 4)
+                    playerNum++;
                 textLabel.setText(playerNum + "");
             }
         });
@@ -182,26 +222,28 @@ public class SplendorHomeScreen extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (playerNum > 2) playerNum--;
+                if (playerNum > 2)
+                    playerNum--;
                 textLabel.setText(playerNum + "");
             }
         });
 
-        // adding the element to the screen
-        panel.add(startLabel);
+        // Add components to panel
+        panel.add(transitionOverlay);
         panel.add(infoLabel);
         panel.add(exitBtnLabel);
         panel.add(infoCardLabel);
         panel.add(addLabel);
         panel.add(subtractLabel);
         panel.add(textLabel);
+        panel.add(startLabel);
 
         add(panel);
         pack();
         setVisible(true);
         setLocationRelativeTo(null);
 
-        // setting the coordinates and bounds for the INFO PANEL elements
+        // Setting initial bounds
         infoCardLabel.setBounds(0, -10, getWidth(), getHeight() - 10);
         infoCardLabel.setVisible(false);
         exitBtnLabel.setBounds(getWidth() - 75, 10, 50, 50);
@@ -212,15 +254,29 @@ public class SplendorHomeScreen extends JFrame {
         textLabel.setBounds(getWidth() / 2 - 10, getHeight() / 2 + 100, 200, 75);
     }
 
+    // Method to start game with transition
+    private void startGameWithTransition() {
+        // Make transition overlay visible and start fade-out
+        transitionOverlay.setVisible(true);
+        transitionOverlay.startFadeOut();
+    }
+
+    // Method to check if mouse is over the info button to prevent game start
+    private boolean isMouseOverInfoButton(MouseEvent e) {
+        Point mousePoint = e.getPoint();
+        Rectangle infoButtonBounds = new Rectangle(
+                infoLabel.getX(),
+                infoLabel.getY(),
+                infoLabel.getWidth(),
+                infoLabel.getHeight());
+        return infoButtonBounds.contains(mousePoint);
+    }
+
     // Method to adjust button size and position based on window size
     private void adjustButtonPosition(int panelWidth, int panelHeight) {
-        int startButtonX = panelWidth / 2 - 125; // Center horizontally
-        int startButtonY = panelHeight / 2 + 200; // Place slightly below center
+        int infoButtonX = panelWidth / 2 + 280;
+        int infoButtonY = panelHeight / 2 - 200;
 
-        int infoButtonX = panelWidth / 2 + 280; // Center horizontally
-        int infoButtonY = panelHeight / 2 - 200; // Place above the start button with a gap
-
-        startLabel.setBounds(startButtonX, startButtonY, initialWidth, initialHeight);
         infoLabel.setBounds(infoButtonX, infoButtonY, initialHeight, initialHeight);
     }
 
@@ -228,25 +284,24 @@ public class SplendorHomeScreen extends JFrame {
     private void animateImage(JLabel label, boolean enlarge) {
         int currentWidth = label.getWidth();
         int currentHeight = label.getHeight();
-        int newWidth = (int) (enlarge ? currentWidth * 1.2 : currentWidth / 1.2); // Animation size
-        int newHeight = (int) (enlarge ? currentHeight * 1.2 : currentHeight / 1.2); // Animation size
-        int xPosition = label.getX() - (newWidth - currentWidth) / 2; // Keep centered
+        int newWidth = (int) (enlarge ? currentWidth * 1.2 : currentWidth / 1.2);
+        int newHeight = (int) (enlarge ? currentHeight * 1.2 : currentHeight / 1.2);
+        int xPosition = label.getX() - (newWidth - currentWidth) / 2;
         int yPosition = label.getY() - (newHeight - currentHeight) / 2;
 
         label.setBounds(xPosition, yPosition, newWidth, newHeight);
 
         // Adjust image scaling based on which label is being hovered
         Image scaledImage;
-        if (label == startLabel) {
-            scaledImage = startButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-        } else if (label == infoLabel) {
+        if (label == infoLabel) {
             scaledImage = infoButton.getImage().getScaledInstance(newHeight + 10, newHeight, Image.SCALE_SMOOTH);
         } else if (label == exitBtnLabel) {
             scaledImage = exitBtn.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         } else if (label == addLabel) {
             scaledImage = addButton.getImage().getScaledInstance(newWidth, newHeight - 10, Image.SCALE_SMOOTH);
         } else if (label == subtractLabel) {
-            scaledImage = subtractButton.getImage().getScaledInstance(newWidth - 10, newHeight - 20, Image.SCALE_SMOOTH);
+            scaledImage = subtractButton.getImage().getScaledInstance(newWidth - 10, newHeight - 20,
+                    Image.SCALE_SMOOTH);
         } else {
             return;
         }

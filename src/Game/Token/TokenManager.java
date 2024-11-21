@@ -362,6 +362,20 @@ public class TokenManager {
         tokenPanel.repaint();
     }
 
+    public void addToken(String color, int num) {
+        int currentCount = availableTokens.get(color);
+        availableTokens.put(color, currentCount + num);
+        updateCountLabel(color, currentCount + num);
+    }
+
+    public void removeToken(String color, int num) {
+        int currentCount = availableTokens.get(color);
+        if (currentCount > 0) {
+            availableTokens.put(color, currentCount - num);
+            updateCountLabel(color, currentCount - num);
+        }
+    }
+
     private void resetPick()
     {
         String color = "";
@@ -440,5 +454,11 @@ public class TokenManager {
     // Add method to get token count for a specific player
     public int getPlayerTokenCount(int playerIndex) {
         return playerTokenCounts.getOrDefault(playerIndex, 0);
+    }
+
+    public void setPlayerTokenCount(int num) {
+        playerTokenCounts.put(currentPlayer, totalTokenCount += num);
+        gameScreen.updateTotalTokensLabel(totalTokenCount);
+        tokenPanel.repaint();
     }
 }

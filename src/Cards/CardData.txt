@@ -38,7 +38,7 @@
 1	0	Onyx/L1O6	0	0	0	0	1	1	2	1	1	0
 1	0	Onyx/L1O7	0	0	0	0	1	2	2	0	1	0
 1	0	Onyx/L1O8	0	0	0	0	1	0	0	1	3	1
-2	2	Diamond/L2D1	1	0	0	0	0	0	0	2   2   2
+2	2	Diamond/L2D1	1	0	0	0	0	0	0	2	2	2
 2	3	Diamond/L2D2	1	0	0	0	0	0	0	0	5	0
 2	2	Diamond/L2D3	1	0	0	0	0	2	3	0	3	0
 2	1	Diamond/L2D4	1	0	0	0	0	6	0	0	0	0

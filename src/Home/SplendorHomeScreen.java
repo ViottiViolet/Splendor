@@ -25,47 +25,136 @@ public class SplendorHomeScreen extends JFrame {
     private static boolean infoVisible = false;
     private static int playerNum = 2;
 
-    // Transition Overlay class
     private class TransitionOverlay extends JPanel {
         private float opacity = 0.0f;
         private final Timer fadeTimer;
-
+        private final int FADE_DURATION = 800;
+        private final int TIMER_INTERVAL = 16;
+        private final float OPACITY_INCREMENT = 1.0f / (FADE_DURATION / TIMER_INTERVAL);
+        private boolean isTransitioning = false;
+        private boolean isPreloaded = false;
+        private MainClass gameInstance;
+        private Thread preloadThread;
+    
         public TransitionOverlay() {
             setOpaque(false);
-            setBackground(Color.WHITE);
-
-            // Create a timer for smooth fade-out
-            fadeTimer = new Timer(20, new ActionListener() {
+            setBackground(Color.BLACK);
+            
+            fadeTimer = new Timer(TIMER_INTERVAL, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    opacity += 0.03f;
+                    if (!isTransitioning) return;
+                    
+                    @SuppressWarnings("unused")
+                    float easedProgress = easeInOutCubic(opacity);
+                    opacity = Math.min(1.0f, opacity + OPACITY_INCREMENT);
+                    
+                    // Start preloading when transition is halfway through
+                    if (opacity >= 0.5f && !isPreloaded) {
+                        startPreloading();
+                    }
+                    
                     if (opacity >= 1.0f) {
-                        // Start the game after full fade
-                        SwingUtilities.invokeLater(() -> {
-                            MainClass.setPlayerCount(playerNum);
-                            MainClass.main(new String[0]);
-                            dispose();
-                        });
+                        opacity = 1.0f;
+                        isTransitioning = false;
                         fadeTimer.stop();
+                        
+                        // Launch game immediately if preloaded, otherwise wait for preload
+                        if (isPreloaded) {
+                            launchGame();
+                        }
                     }
                     repaint();
                 }
             });
         }
-
-        public void startFadeOut() {
-            fadeTimer.start();
+    
+        @SuppressWarnings("static-access")
+        private void startPreloading() {
+            isPreloaded = true;
+            
+            // Create and start preload thread
+            preloadThread = new Thread(() -> {
+                try {
+                    // Pre-initialize game components
+                    SwingUtilities.invokeAndWait(() -> {
+                        gameInstance = new MainClass();
+                        gameInstance.setPlayerCount(playerNum);
+                        gameInstance.preloadAssets(); // Add this method to MainClass
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            preloadThread.setDaemon(true);
+            preloadThread.setPriority(Thread.MAX_PRIORITY);
+            preloadThread.start();
         }
-
+    
+        private void launchGame() {
+            try {
+                // Wait for preload to complete if still running
+                if (preloadThread != null && preloadThread.isAlive()) {
+                    preloadThread.join(1000); // Wait up to 1 second
+                }
+                
+                // Launch the pre-initialized game
+                SwingUtilities.invokeLater(() -> {
+                    if (gameInstance != null) {
+                        gameInstance.startGame(); // Add this method to MainClass
+                        dispose();
+                    } else {
+                        // Fallback to original launch method if preload failed
+                        MainClass.setPlayerCount(playerNum);
+                        MainClass.main(new String[0]);
+                        dispose();
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        private float easeInOutCubic(float x) {
+            return x < 0.5f
+                ? 4 * x * x * x
+                : 1 - (float)Math.pow(-2 * x + 2, 3) / 2;
+        }
+    
+        public void startFadeOut() {
+            if (!isTransitioning) {
+                opacity = 0.0f;
+                isTransitioning = true;
+                isPreloaded = false;
+                fadeTimer.start();
+            }
+        }
+    
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setComposite(AlphaComposite.SrcOver.derive(opacity));
+            
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            
+            float easedOpacity = easeInOutCubic(opacity);
+            g2d.setComposite(AlphaComposite.SrcOver.derive(easedOpacity));
             g2d.setColor(getBackground());
             g2d.fillRect(0, 0, getWidth(), getHeight());
+            
             g2d.dispose();
         }
+    }
+    
+    // Update the startGameWithTransition method
+    private void startGameWithTransition() {
+        // Ensure the overlay covers the entire window
+        transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
+        transitionOverlay.setVisible(true);
+        
+        // Start the transition
+        transitionOverlay.startFadeOut();
     }
 
     public SplendorHomeScreen() {
@@ -252,13 +341,6 @@ public class SplendorHomeScreen extends JFrame {
         addLabel.setBounds(getWidth() / 2 + 80, getHeight() / 2 + 100, 75, 75);
         subtractLabel.setBounds(getWidth() / 2 - 150, getHeight() / 2 + 100, 75, 75);
         textLabel.setBounds(getWidth() / 2 - 10, getHeight() / 2 + 100, 200, 75);
-    }
-
-    // Method to start game with transition
-    private void startGameWithTransition() {
-        // Make transition overlay visible and start fade-out
-        transitionOverlay.setVisible(true);
-        transitionOverlay.startFadeOut();
     }
 
     // Method to check if mouse is over the info button to prevent game start

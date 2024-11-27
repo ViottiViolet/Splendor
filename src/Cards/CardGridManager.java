@@ -135,6 +135,7 @@ public class CardGridManager {
             };
             int[] temp = card.getCosts();
             int i = 0;
+            // goes through costs to see if player can afford with bonuses + tokens
             for (String color : new String[]{"white", "blue", "green", "red", "black"})
             {
                 temp[i] -= tokenInventory.getBonusCount(color);
@@ -146,7 +147,12 @@ public class CardGridManager {
                 if (temp[i] < 0) temp[i] = 0;
                 i++;
             }
-            if (!Arrays.equals(temp, new int[]{0, 0, 0, 0, 0}))
+
+            int remainingCost = temp[0]+temp[1]+temp[2]+temp[3]+temp[4];
+
+            // if player cannot afford, show warning. otherwise, continue with purchase
+            // if player can spend gold tokens on remaining costs, continue
+            if (remainingCost != 0 && remainingCost > tokenInventory.getTokenCount("gold"))
             {
                 JOptionPane.showMessageDialog(
                         grid,
@@ -164,14 +170,27 @@ public class CardGridManager {
             i=0;
             for (String color : new String[]{"white", "blue", "green", "red", "black"})
             {
-                tokenInventory.removeToken(color, card.getCosts()[i++]);
-                tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
+                if (tokenInventory.getTokenCount(color)!=0)
+                {
+                    gameScreen.getTokenManager().addToken(color, card.getCosts()[i]);
+                    gameScreen.getTokenManager().removeToken(color, tokenInventory.getBonusCount(color));
+                    gameScreen.getTokenManager().setPlayerTokenCount(-card.getCosts()[i]);
+                    gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
+                    tokenInventory.removeToken(color, card.getCosts()[i]);
+                    tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
+                    if (tokenInventory.getTokenCount(color) < 0) tokenInventory.addToken(color, -tokenInventory.getTokenCount(color));
+                }
+                i++;
             }
 
             // Add bonus to player's inventory
             if (tokenColor != null) {
                 tokenInventory.addBonus(tokenColor);
             }
+
+            // take remaining costs from gold tokens, if applicable
+            tokenInventory.removeToken("gold", remainingCost);
+            gameScreen.getTokenManager().addToken("gold", remainingCost);
 
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);
@@ -215,6 +234,8 @@ public class CardGridManager {
                     reserveInventory.addReservedCard(card);
                     // Replace the card in grid
                     replaceCardInGrid(clickedLabel, cardStack, grid);
+                    // increase token counter
+                    gameScreen.getTokenManager().setPlayerTokenCount(1);
                 } else {
                     JOptionPane.showMessageDialog(grid,
                             "No gold tokens available for reserving a card!",

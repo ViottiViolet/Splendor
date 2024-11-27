@@ -201,6 +201,11 @@ public class SplendorHomeScreen extends JFrame {
         textLabel.setFont(font);
         textLabel.setForeground(new Color(237, 220, 199));
 
+        JLabel startLabel = new JLabel("Click anywhere to start");
+        startLabel.setFont(font);
+        startLabel.setForeground(new Color(237, 220, 199));
+        startLabel.setBounds(getWidth()/2 - 225, getHeight()/2 + 200, 475, 100);
+
         // Dynamically adjust the position and size of the buttons based on screen size
         panel.addComponentListener(new ComponentAdapter() {
             @Override
@@ -320,6 +325,7 @@ public class SplendorHomeScreen extends JFrame {
         panel.add(addLabel);
         panel.add(subtractLabel);
         panel.add(textLabel);
+        panel.add(startLabel);
 
         add(panel);
         pack();

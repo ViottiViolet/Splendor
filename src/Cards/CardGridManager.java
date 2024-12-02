@@ -160,8 +160,12 @@ public class CardGridManager {
                 if (temp[i] < 0) temp[i] = 0;
                 i++;
             }
+
+            int remainingCost = temp[0]+temp[1]+temp[2]+temp[3]+temp[4];
+
             // if player cannot afford, show warning. otherwise, continue with purchase
-            if (!Arrays.equals(temp, new int[]{0, 0, 0, 0, 0}))
+            // if player can spend gold tokens on remaining costs, continue
+            if (remainingCost != 0 && remainingCost > tokenInventory.getTokenCount("gold"))
             {
                 JOptionPane.showMessageDialog(
                         grid,
@@ -187,6 +191,7 @@ public class CardGridManager {
                     gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
                     tokenInventory.removeToken(color, card.getCosts()[i]);
                     tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
+                    if (tokenInventory.getTokenCount(color) < 0) tokenInventory.addToken(color, -tokenInventory.getTokenCount(color));
                 }
                 i++;
             }
@@ -195,6 +200,10 @@ public class CardGridManager {
             if (tokenColor != null) {
                 tokenInventory.addBonus(tokenColor);
             }
+
+            // take remaining costs from gold tokens, if applicable
+            tokenInventory.removeToken("gold", remainingCost);
+            gameScreen.getTokenManager().addToken("gold", remainingCost);
 
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);
@@ -240,6 +249,8 @@ public class CardGridManager {
                     reserveInventory.addReservedCard(card);
                     // Replace the card in grid
                     replaceCardInGrid(clickedLabel, cardStack, grid);
+                    // increase token counter
+                    gameScreen.getTokenManager().setPlayerTokenCount(1);
                 } else {
                     JOptionPane.showMessageDialog(grid,
                             "No gold tokens available for reserving a card!",

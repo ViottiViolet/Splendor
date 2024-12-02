@@ -32,6 +32,7 @@ public class SplendorGameScreen extends JPanel {
     @SuppressWarnings("unused")
     private final int playerCount;
     private JLabel playerNumberLabel;
+    private int playerTurn = 0;
 
     private ReserveInventory reserveInventory;
 
@@ -158,5 +159,16 @@ public class SplendorGameScreen extends JPanel {
     
     public TokenInventory getCurrentPlayerInventory() {
         return cycleInventory.getInventory();
+    }
+
+    public int getPlayerTurn() { return playerTurn; }
+
+    public void nextPlayerTurn() {
+        playerTurn = (playerTurn + 1) % playerCount;
+        cycleInventory.showSpecificPlayer(playerTurn);
+    }
+
+    public CycleInventory getCycleInventory() {
+        return cycleInventory;
     }
 }

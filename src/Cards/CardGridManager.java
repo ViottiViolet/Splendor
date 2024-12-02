@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import Game.Inventory.ReserveInventory;
 import Game.Inventory.TokenInventory;
+import Game.Inventory.CycleInventory;
 import Game.Main.SplendorGameScreen;
 import Game.Token.TokenManager;
 
@@ -77,7 +78,19 @@ public class CardGridManager {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleCardClick(label, card, cardStack, grid);
+                SplendorGameScreen gameScreen;
+                Container parent = grid;
+                while (!(parent instanceof SplendorGameScreen) && parent != null) {
+                    parent = parent.getParent();
+                }
+
+                if (parent instanceof SplendorGameScreen) {
+                    gameScreen = (SplendorGameScreen) parent;
+                    if (gameScreen.getCycleInventory().getCurrentPlayerIndex() != gameScreen.getPlayerTurn()) return;
+                    handleCardClick(label, card, cardStack, grid);
+                }
+
+
             }
 
             @Override
@@ -185,6 +198,8 @@ public class CardGridManager {
 
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);
+
+            gameScreen.nextPlayerTurn();
         }
     }
 
@@ -237,6 +252,7 @@ public class CardGridManager {
                         "Cannot Reserve",
                         JOptionPane.WARNING_MESSAGE);
             }
+            gameScreen.nextPlayerTurn();
         }
     }
 

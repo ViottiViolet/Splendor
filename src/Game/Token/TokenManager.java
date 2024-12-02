@@ -2,6 +2,7 @@ package Game.Token;
 
 import javax.swing.*;
 
+import Game.Inventory.CycleInventory;
 import Game.Inventory.TokenInventory;
 import Game.Main.SplendorGameScreen;
 
@@ -36,6 +37,7 @@ public class TokenManager {
     private TokenInventory currentPlayerInventory;
 
     private final SplendorGameScreen gameScreen; // Add reference to game screen
+    private final CycleInventory cycleInventory;
     private int totalTokenCount = 0; // Track total tokens
     private static final int MAX_TOKENS = 10;
     private final Map<Integer, Integer> playerTokenCounts; // Store token counts for each player
@@ -44,6 +46,7 @@ public class TokenManager {
 
     public TokenManager(int playerCount, SplendorGameScreen gameScreen) {
         this.gameScreen = gameScreen;
+        this.cycleInventory = gameScreen.getCycleInventory();
         tokens = new HashMap<>();
         tokenCounts = new HashMap<>();
         availableTokens = new HashMap<>();
@@ -105,6 +108,7 @@ public class TokenManager {
 
 
             public void mouseClicked(MouseEvent e) {
+                if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
                 if (!tokensTakenInTurn.isEmpty()) resetPick();
             }
         });
@@ -128,7 +132,9 @@ public class TokenManager {
 
 
             public void mouseClicked(MouseEvent e) {
+                if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
                 tokensTakenInTurn.removeAll(tokensTakenInTurn);
+                gameScreen.nextPlayerTurn();
             }
         });
     }
@@ -270,6 +276,7 @@ public class TokenManager {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
                 if (totalTokenCount >= MAX_TOKENS) {
                     JOptionPane.showMessageDialog(
                         tokenPanel,

@@ -137,7 +137,6 @@ public class CardGridManager {
             SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
             TokenInventory tokenInventory = gameScreen.getPlayerInventory();
 
-
             int[] tempTokens = new int[]{
                     tokenInventory.getTokenCount("white"),
                     tokenInventory.getTokenCount("blue"),
@@ -203,6 +202,10 @@ public class CardGridManager {
             // take remaining costs from gold tokens, if applicable
             tokenInventory.removeToken("gold", remainingCost);
             gameScreen.getTokenManager().addToken("gold", remainingCost);
+
+            // Update player's score with the card's prestige points
+            int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
+            gameScreen.updatePlayerScore(currentPlayerIndex, card.getPrestige());
 
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);

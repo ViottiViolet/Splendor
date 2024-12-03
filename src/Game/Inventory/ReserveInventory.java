@@ -134,6 +134,16 @@ public class ReserveInventory extends JPanel {
                 options[0]);
 
         if (choice == 0) { // Buy
+            Container parent = this;
+            SplendorGameScreen gameScreen;
+            while (!(parent instanceof SplendorGameScreen) && parent != null) {
+                parent = parent.getParent();
+            }
+
+            if (parent instanceof SplendorGameScreen) {
+                gameScreen = (SplendorGameScreen) parent;
+                if (gameScreen.getCycleInventory().getCurrentPlayerIndex() != gameScreen.getPlayerTurn()) return;
+            }
             handleBuyCard(clickedLabel, card);
         }
     }

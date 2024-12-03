@@ -25,18 +25,18 @@ public class MainClass {
         try {
             // Pre-load card data
             cardLoader = new CardLoader("src/Cards/CardData.txt");
-            
+
             // Initialize game screen
             gameScreen = new SplendorGameScreen(cardLoader, playerCount);
-            
+
             // Setup frame
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             @SuppressWarnings("unused")
             GraphicsDevice gd = ge.getDefaultScreenDevice();
-            
+
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setLayout(new BorderLayout());
-            
+
             assetsPreloaded = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +52,7 @@ public class MainClass {
         SwingUtilities.invokeLater(() -> {
             // Add game screen to frame
             frame.add(gameScreen, BorderLayout.CENTER);
-            
+
             // Make the frame visible
             frame.setVisible(true);
         });

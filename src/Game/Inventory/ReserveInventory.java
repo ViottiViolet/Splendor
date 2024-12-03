@@ -273,10 +273,10 @@ public class ReserveInventory extends JPanel {
         repaint();
     }
 
-    // Modified to switch to the new player instead of clearing
-    public void resetForNewPlayer() {
-        switchToPlayer(currentPlayerIndex);
-    }
+// Modified to switch to the new player instead of clearing
+//    public void resetForNewPlayer() {
+//        switchToPlayer(currentPlayerIndex);
+//    }
 
     @Override
     protected void paintComponent(Graphics g) {

@@ -2,6 +2,7 @@ package Game.Inventory;
 
 import Cards.Card;
 import Game.Main.SplendorGameScreen;
+import Game.Token.TokenManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -123,6 +124,22 @@ public class ReserveInventory extends JPanel {
     }
 
     private void handleCardClick(JLabel clickedLabel, Card card) {
+        Container parent = this;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            if (gameScreen.getTokenManager().getTokensTakenInTurn().size() > 0) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "You cannot collect tokens and cards in the same turn. Reset your tokens or confirm them.",
+                        "Cannot Perform Multiple Actions",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+        }
         String[] options = { "Buy", "Cancel" };
         int choice = JOptionPane.showOptionDialog(this,
                 "Would you like to purchase this card?",
@@ -134,7 +151,6 @@ public class ReserveInventory extends JPanel {
                 options[0]);
 
         if (choice == 0) { // Buy
-            Container parent = this;
             SplendorGameScreen gameScreen;
             while (!(parent instanceof SplendorGameScreen) && parent != null) {
                 parent = parent.getParent();

@@ -54,10 +54,12 @@ public class SplendorHomeScreen extends JFrame {
                         startPreloading();
                     }
 
+
                     if (opacity >= 1.0f) {
                         opacity = 1.0f;
                         isTransitioning = false;
                         fadeTimer.stop();
+
 
                         // Launch game immediately if preloaded, otherwise wait for preload
                         if (isPreloaded) {
@@ -129,7 +131,7 @@ public class SplendorHomeScreen extends JFrame {
                 fadeTimer.start();
             }
         }
-
+    
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -138,6 +140,7 @@ public class SplendorHomeScreen extends JFrame {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
+
             float easedOpacity = easeInOutCubic(opacity);
             g2d.setComposite(AlphaComposite.SrcOver.derive(easedOpacity));
             g2d.setColor(getBackground());
@@ -145,6 +148,16 @@ public class SplendorHomeScreen extends JFrame {
 
             g2d.dispose();
         }
+    }
+    
+    // Update the startGameWithTransition method
+    private void startGameWithTransition() {
+        // Ensure the overlay covers the entire window
+        transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
+        transitionOverlay.setVisible(true);
+        
+        // Start the transition
+        transitionOverlay.startFadeOut();
     }
 
     // Update the startGameWithTransition method

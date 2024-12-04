@@ -110,6 +110,22 @@ public class CardGridManager {
     }
 
     private void handleCardClick(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            if (gameScreen.getTokenManager().getTokensTakenInTurn().size() > 0) {
+                JOptionPane.showMessageDialog(
+                        grid,
+                        "You cannot collect tokens and cards in the same turn. Reset your tokens or confirm them.",
+                        "Cannot Perform Multiple Actions",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+        }
         String[] options = { "Buy", "Reserve", "Cancel" };
         int choice = JOptionPane.showOptionDialog(grid,
                 "What would you like to do with this card?",
@@ -256,12 +272,14 @@ public class CardGridManager {
                             "No gold tokens available for reserving a card!",
                             "Cannot Reserve",
                             JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
             } else {
                 JOptionPane.showMessageDialog(grid,
                         "Maximum reserve limit reached!",
                         "Cannot Reserve",
                         JOptionPane.WARNING_MESSAGE);
+                return;
             }
             gameScreen.nextPlayerTurn();
         }

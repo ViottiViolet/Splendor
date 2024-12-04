@@ -312,6 +312,17 @@ public class TokenManager {
                 if (tokensTakenInTurn.contains(color))
                 {
 
+                    if (availableTokens.get(color) <= 3)
+                    {
+                        JOptionPane.showMessageDialog(
+                                tokenPanel,
+                                "Cannot take 2 tokens from a stack with 3 or less gems. Please reset tokens.",
+                                "Token Limit Reached",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                        return;
+                    }
+
                     if (tokensTakenInTurn.size()!=2)
                     {
                         takeToken(color);
@@ -467,5 +478,10 @@ public class TokenManager {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
+    }
+
+    public ArrayList<String> getTokensTakenInTurn()
+    {
+           return tokensTakenInTurn;
     }
 }

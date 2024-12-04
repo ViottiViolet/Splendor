@@ -10,7 +10,7 @@ public class CycleInventory extends JPanel {
     private final JLabel leftArrow;
     private final JLabel rightArrow;
     private final int totalPlayers;
-    private int currentPlayerIndex;
+    private int currentPlayerIndex = 0;
     private static final int ARROW_SIZE = 50;
     private final TokenInventory inventory;
     private final java.util.List<PlayerChangeListener> playerChangeListeners;
@@ -104,6 +104,13 @@ public class CycleInventory extends JPanel {
     
     private void showPreviousPlayer() {
         currentPlayerIndex = (currentPlayerIndex - 1 + totalPlayers) % totalPlayers;
+        inventory.setCurrentPlayerIndex(currentPlayerIndex);
+        notifyPlayerChanged();
+        repaint();
+    }
+
+    public void showSpecificPlayer(int idx) {
+        currentPlayerIndex = idx;
         inventory.setCurrentPlayerIndex(currentPlayerIndex);
         notifyPlayerChanged();
         repaint();

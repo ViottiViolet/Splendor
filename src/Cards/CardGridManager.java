@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import Game.Inventory.ReserveInventory;
 import Game.Inventory.TokenInventory;
+import Game.Inventory.CycleInventory;
 import Game.Main.SplendorGameScreen;
 import Game.Token.TokenManager;
 
@@ -77,7 +78,19 @@ public class CardGridManager {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleCardClick(label, card, cardStack, grid);
+                SplendorGameScreen gameScreen;
+                Container parent = grid;
+                while (!(parent instanceof SplendorGameScreen) && parent != null) {
+                    parent = parent.getParent();
+                }
+
+                if (parent instanceof SplendorGameScreen) {
+                    gameScreen = (SplendorGameScreen) parent;
+                    if (gameScreen.getCycleInventory().getCurrentPlayerIndex() != gameScreen.getPlayerTurn()) return;
+                    handleCardClick(label, card, cardStack, grid);
+                }
+
+
             }
 
             @Override
@@ -97,6 +110,22 @@ public class CardGridManager {
     }
 
     private void handleCardClick(JLabel clickedLabel, Card card, Stack<Card> cardStack, JPanel grid) {
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            if (gameScreen.getTokenManager().getTokensTakenInTurn().size() > 0) {
+                JOptionPane.showMessageDialog(
+                        grid,
+                        "You cannot collect tokens and cards in the same turn. Reset your tokens or confirm them.",
+                        "Cannot Perform Multiple Actions",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+        }
         String[] options = { "Buy", "Reserve", "Cancel" };
         int choice = JOptionPane.showOptionDialog(grid,
                 "What would you like to do with this card?",
@@ -147,8 +176,12 @@ public class CardGridManager {
                 if (temp[i] < 0) temp[i] = 0;
                 i++;
             }
+
+            int remainingCost = temp[0]+temp[1]+temp[2]+temp[3]+temp[4];
+
             // if player cannot afford, show warning. otherwise, continue with purchase
-            if (!Arrays.equals(temp, new int[]{0, 0, 0, 0, 0}))
+            // if player can spend gold tokens on remaining costs, continue
+            if (remainingCost != 0 && remainingCost > tokenInventory.getTokenCount("gold"))
             {
                 JOptionPane.showMessageDialog(
                         grid,
@@ -174,6 +207,7 @@ public class CardGridManager {
                     gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
                     tokenInventory.removeToken(color, card.getCosts()[i]);
                     tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
+                    if (tokenInventory.getTokenCount(color) < 0) tokenInventory.addToken(color, -tokenInventory.getTokenCount(color));
                 }
                 i++;
             }
@@ -183,8 +217,14 @@ public class CardGridManager {
                 tokenInventory.addBonus(tokenColor);
             }
 
+            // take remaining costs from gold tokens, if applicable
+            tokenInventory.removeToken("gold", remainingCost);
+            gameScreen.getTokenManager().addToken("gold", remainingCost);
+
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);
+
+            gameScreen.nextPlayerTurn();
         }
     }
 
@@ -225,18 +265,23 @@ public class CardGridManager {
                     reserveInventory.addReservedCard(card);
                     // Replace the card in grid
                     replaceCardInGrid(clickedLabel, cardStack, grid);
+                    // increase token counter
+                    gameScreen.getTokenManager().setPlayerTokenCount(1);
                 } else {
                     JOptionPane.showMessageDialog(grid,
                             "No gold tokens available for reserving a card!",
                             "Cannot Reserve",
                             JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
             } else {
                 JOptionPane.showMessageDialog(grid,
                         "Maximum reserve limit reached!",
                         "Cannot Reserve",
                         JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            gameScreen.nextPlayerTurn();
         }
     }
 

@@ -96,12 +96,12 @@ public class TokenManager {
         resetLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                animateImage(resetLabel, true);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                animateImage(resetLabel, false);
             }
 
 
@@ -118,12 +118,12 @@ public class TokenManager {
         confirmLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                animateImage(confirmLabel, true);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                animateImage(confirmLabel, false);
             }
 
 
@@ -460,5 +460,32 @@ public class TokenManager {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
+    }
+    private void animateImage(JLabel label, boolean enlarge) {
+        int currentWidth = label.getWidth();
+        int currentHeight = label.getHeight();
+
+        // Calculate scaling factor
+        float scaleFactor = enlarge ? 1.2f : 1f/1.2f;
+
+        int newWidth = (int) (currentWidth * scaleFactor);
+        int newHeight = (int) (currentHeight * scaleFactor);
+
+        // Adjust x and y positions to keep the left and top edges in the same position
+        int xPosition = label.getX() - (int)((newWidth - currentWidth) * 0.5);
+        int yPosition = label.getY() - (int)((newHeight - currentHeight) * 0.5);
+
+        label.setBounds(xPosition, yPosition, newWidth, newHeight);
+
+        // Adjust image scaling based on which label is being hovered
+        Image scaledImage;
+        if (label == resetLabel) {
+            scaledImage = resetButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        } else if (label == confirmLabel) {
+            scaledImage = confirmButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        } else {
+            return;
+        }
+        label.setIcon(new ImageIcon(scaledImage));
     }
 }

@@ -159,4 +159,5 @@ public class SplendorGameScreen extends JPanel {
     public TokenInventory getCurrentPlayerInventory() {
         return cycleInventory.getInventory();
     }
+
 }

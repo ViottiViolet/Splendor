@@ -191,11 +191,12 @@ public class SplendorGameScreen extends JPanel {
         reserveInventory.setBounds(reserveX, reserveY, 320, 170);
 
         // Position player score labels
-        int scoreLabelsY = reserveY + reserveInventory.getHeight() + 10;
+        int scoreLabelsY = 100;
+        int scoreLabelsHeight = TOKEN_INVENTORY_HEIGHT / playerCount;
         int scoreLabelsWidth = TOKEN_INVENTORY_WIDTH / playerCount;
         for (int i = 0; i < playerScoreLabels.size(); i++) {
             JLabel scoreLabel = playerScoreLabels.get(i);
-            scoreLabel.setBounds(inventoryX + i * scoreLabelsWidth, scoreLabelsY, scoreLabelsWidth, 30);
+            scoreLabel.setBounds(100, inventoryY + i * scoreLabelsHeight - 500, scoreLabelsWidth, 30);
         }
     }
 

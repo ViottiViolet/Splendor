@@ -35,30 +35,32 @@ public class SplendorHomeScreen extends JFrame {
         private boolean isPreloaded = false;
         private MainClass gameInstance;
         private Thread preloadThread;
-    
+
         public TransitionOverlay() {
             setOpaque(false);
             setBackground(Color.BLACK);
-            
+
             fadeTimer = new Timer(TIMER_INTERVAL, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!isTransitioning) return;
-                    
+
                     @SuppressWarnings("unused")
                     float easedProgress = easeInOutCubic(opacity);
                     opacity = Math.min(1.0f, opacity + OPACITY_INCREMENT);
-                    
+
                     // Start preloading when transition is halfway through
                     if (opacity >= 0.5f && !isPreloaded) {
                         startPreloading();
                     }
-                    
+
+
                     if (opacity >= 1.0f) {
                         opacity = 1.0f;
                         isTransitioning = false;
                         fadeTimer.stop();
-                        
+
+
                         // Launch game immediately if preloaded, otherwise wait for preload
                         if (isPreloaded) {
                             launchGame();
@@ -68,11 +70,11 @@ public class SplendorHomeScreen extends JFrame {
                 }
             });
         }
-    
+
         @SuppressWarnings("static-access")
         private void startPreloading() {
             isPreloaded = true;
-            
+
             // Create and start preload thread
             preloadThread = new Thread(() -> {
                 try {
@@ -90,14 +92,14 @@ public class SplendorHomeScreen extends JFrame {
             preloadThread.setPriority(Thread.MAX_PRIORITY);
             preloadThread.start();
         }
-    
+
         private void launchGame() {
             try {
                 // Wait for preload to complete if still running
                 if (preloadThread != null && preloadThread.isAlive()) {
                     preloadThread.join(1000); // Wait up to 1 second
                 }
-                
+
                 // Launch the pre-initialized game
                 SwingUtilities.invokeLater(() -> {
                     if (gameInstance != null) {
@@ -114,13 +116,13 @@ public class SplendorHomeScreen extends JFrame {
                 e.printStackTrace();
             }
         }
-    
+
         private float easeInOutCubic(float x) {
             return x < 0.5f
-                ? 4 * x * x * x
-                : 1 - (float)Math.pow(-2 * x + 2, 3) / 2;
+                    ? 4 * x * x * x
+                    : 1 - (float)Math.pow(-2 * x + 2, 3) / 2;
         }
-    
+
         public void startFadeOut() {
             if (!isTransitioning) {
                 opacity = 0.0f;
@@ -134,15 +136,16 @@ public class SplendorHomeScreen extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
-            
+
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            
+
+
             float easedOpacity = easeInOutCubic(opacity);
             g2d.setComposite(AlphaComposite.SrcOver.derive(easedOpacity));
             g2d.setColor(getBackground());
             g2d.fillRect(0, 0, getWidth(), getHeight());
-            
+
             g2d.dispose();
         }
     }
@@ -153,6 +156,16 @@ public class SplendorHomeScreen extends JFrame {
         transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
         transitionOverlay.setVisible(true);
         
+        // Start the transition
+        transitionOverlay.startFadeOut();
+    }
+
+    // Update the startGameWithTransition method
+    private void startGameWithTransition() {
+        // Ensure the overlay covers the entire window
+        transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
+        transitionOverlay.setVisible(true);
+
         // Start the transition
         transitionOverlay.startFadeOut();
     }

@@ -29,6 +29,7 @@ public class MainClass {
             // Initialize game screen
             gameScreen = new SplendorGameScreen(cardLoader, playerCount);
 
+
             // Setup frame
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             @SuppressWarnings("unused")

@@ -462,30 +462,37 @@ public class TokenManager {
         tokenPanel.repaint();
     }
     private void animateImage(JLabel label, boolean enlarge) {
-        int currentWidth = label.getWidth();
-        int currentHeight = label.getHeight();
+        // Use the original full image for scaling
+        ImageIcon originalIcon = (label == resetLabel) ? resetButton : confirmButton;
 
-        // Calculate scaling factor
-        float scaleFactor = enlarge ? 1.2f : 1f/1.2f;
+        // Original base dimensions
+        int baseWidth = (int) (3.24 * 39);
+        int baseHeight = 39;
 
-        int newWidth = (int) (currentWidth * scaleFactor);
-        int newHeight = (int) (currentHeight * scaleFactor);
-
-        // Adjust x and y positions to keep the left and top edges in the same position
-        int xPosition = label.getX() - (int)((newWidth - currentWidth) * 0.5);
-        int yPosition = label.getY() - (int)((newHeight - currentHeight) * 0.5);
-
-        label.setBounds(xPosition, yPosition, newWidth, newHeight);
-
-        // Adjust image scaling based on which label is being hovered
-        Image scaledImage;
-        if (label == resetLabel) {
-            scaledImage = resetButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-        } else if (label == confirmLabel) {
-            scaledImage = confirmButton.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        int newWidth, newHeight;
+        if (enlarge) {
+            newWidth = (int) (baseWidth * 1.2);
+            newHeight = (int) (baseHeight * 1.2);
         } else {
-            return;
+            newWidth = baseWidth;
+            newHeight = baseHeight;
         }
+
+        // Scale the original image to the new dimensions
+        Image scaledImage = originalIcon.getImage().getScaledInstance(
+                newWidth, newHeight, Image.SCALE_SMOOTH
+        );
+
+        // Calculate position to center the enlarged label
+        int xPosition = label.getX() - (newWidth - baseWidth) / 2;
+        int yPosition = label.getY() - (newHeight - baseHeight) / 2;
+
+        // Ensure x position is not negative
+        xPosition = Math.max(xPosition, label.getX());
+        yPosition = Math.max(yPosition, label.getY());
+
+        // Update label bounds and icon
+        label.setBounds(xPosition, yPosition, newWidth, newHeight);
         label.setIcon(new ImageIcon(scaledImage));
     }
 }

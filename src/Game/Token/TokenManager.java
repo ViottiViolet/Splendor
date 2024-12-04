@@ -19,6 +19,8 @@ public class TokenManager {
     private final Map<String, ImageIcon> normalIcons;
     private final Map<String, ImageIcon> hoverIcons;
     private final JPanel tokenPanel;
+    private final ImageIcon resetButton;
+    private final ImageIcon confirmButton;
     private final JLabel resetLabel;
     private final JLabel confirmLabel;
 
@@ -86,10 +88,9 @@ public class TokenManager {
         }
 
         // Create reset button
-        resetLabel = new JLabel("reset");
-        resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        resetLabel.setForeground(Color.WHITE);
-        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 50, 25);
+        resetButton = new ImageIcon("src/Images/MiscellaneousImages/ResetButton.png");
+        resetLabel = new JLabel(new ImageIcon(resetButton.getImage().getScaledInstance((int) 3.24 * 39, 39, Image.SCALE_SMOOTH)));
+        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, (int) 3.24 * 39, 39);
         tokenPanel.add(resetLabel);
 
         resetLabel.addMouseListener(new MouseAdapter() {
@@ -109,10 +110,9 @@ public class TokenManager {
             }
         });
 
-        confirmLabel = new JLabel("confirm");
-        confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        confirmLabel.setForeground(Color.WHITE);
-        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 75, 25);
+        confirmButton = new ImageIcon("src/Images/MiscellaneousImages/ConfirmButton.png");
+        confirmLabel = new JLabel(new ImageIcon(confirmButton.getImage().getScaledInstance((int) 3.24 * 39, 39, Image.SCALE_SMOOTH)));
+        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, (int) 3.24 * 39, 39);
         tokenPanel.add(confirmLabel);
 
         confirmLabel.addMouseListener(new MouseAdapter() {
@@ -272,10 +272,10 @@ public class TokenManager {
             public void mouseClicked(MouseEvent e) {
                 if (totalTokenCount >= MAX_TOKENS) {
                     JOptionPane.showMessageDialog(
-                        tokenPanel,
-                        "Cannot choose more tokens. Maximum limit (10/10) reached!",
-                        "Token Limit Reached",
-                        JOptionPane.WARNING_MESSAGE
+                            tokenPanel,
+                            "Cannot choose more tokens. Maximum limit (10/10) reached!",
+                            "Token Limit Reached",
+                            JOptionPane.WARNING_MESSAGE
                     );
                     return;
                 }
@@ -450,7 +450,7 @@ public class TokenManager {
         // Trigger repaint for the visual update
         countLabel.repaint();
     }
-    
+
     // Add method to get token count for a specific player
     public int getPlayerTokenCount(int playerIndex) {
         return playerTokenCounts.getOrDefault(playerIndex, 0);

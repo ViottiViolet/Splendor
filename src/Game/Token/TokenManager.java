@@ -90,7 +90,7 @@ public class TokenManager {
 
         // Create reset button
         resetLabel = new JLabel("Reset Tokens");
-        resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        resetLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         resetLabel.setForeground(Color.WHITE);
         resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 200, 25);
         tokenPanel.add(resetLabel);
@@ -114,7 +114,7 @@ public class TokenManager {
         });
 
         confirmLabel = new JLabel("Confirm Tokens");
-        confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        confirmLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         confirmLabel.setForeground(Color.WHITE);
         confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 200, 25);
         tokenPanel.add(confirmLabel);

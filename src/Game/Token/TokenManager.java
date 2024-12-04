@@ -89,21 +89,21 @@ public class TokenManager {
         }
 
         // Create reset button
-        resetLabel = new JLabel("reset");
+        resetLabel = new JLabel("Reset Tokens");
         resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
         resetLabel.setForeground(Color.WHITE);
-        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 50, 25);
+        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 200, 25);
         tokenPanel.add(resetLabel);
 
         resetLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                resetLabel.setForeground(Color.YELLOW);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                resetLabel.setForeground(Color.WHITE);
             }
 
 
@@ -113,21 +113,21 @@ public class TokenManager {
             }
         });
 
-        confirmLabel = new JLabel("confirm");
+        confirmLabel = new JLabel("Confirm Tokens");
         confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
         confirmLabel.setForeground(Color.WHITE);
-        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 75, 25);
+        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 200, 25);
         tokenPanel.add(confirmLabel);
 
         confirmLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                confirmLabel.setForeground(Color.YELLOW);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                confirmLabel.setForeground(Color.WHITE);
             }
 
 
@@ -312,6 +312,17 @@ public class TokenManager {
                 if (tokensTakenInTurn.contains(color))
                 {
 
+                    if (availableTokens.get(color) <= 2)
+                    {
+                        JOptionPane.showMessageDialog(
+                                tokenPanel,
+                                "Cannot take 2 tokens from a stack with 3 or less gems. Please reset tokens.",
+                                "Token Limit Reached",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                        return;
+                    }
+
                     if (tokensTakenInTurn.size()!=2)
                     {
                         takeToken(color);
@@ -467,5 +478,10 @@ public class TokenManager {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
+    }
+
+    public ArrayList<String> getTokensTakenInTurn()
+    {
+           return tokensTakenInTurn;
     }
 }

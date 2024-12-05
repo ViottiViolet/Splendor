@@ -93,7 +93,7 @@ public class SplendorGameScreen extends JPanel {
             reserveInventory.switchToPlayer(currentPlayerIndex);
             
             // Update player score label highlighting
-            updatePlayerScoreLabelHighlighting(currentPlayerIndex);
+           updatePlayerScoreLabelHighlighting(currentPlayerIndex);
         });
 
         playerNumberLabel = new JLabel("Player 1");

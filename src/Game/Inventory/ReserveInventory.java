@@ -2,7 +2,6 @@ package Game.Inventory;
 
 import Cards.Card;
 import Game.Main.SplendorGameScreen;
-import Game.Token.TokenManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -308,10 +307,10 @@ public class ReserveInventory extends JPanel {
         repaint();
     }
 
-    // Modified to switch to the new player instead of clearing
-    public void resetForNewPlayer() {
-        switchToPlayer(currentPlayerIndex);
-    }
+// Modified to switch to the new player instead of clearing
+//    public void resetForNewPlayer() {
+//        switchToPlayer(currentPlayerIndex);
+//    }
 
     @Override
     protected void paintComponent(Graphics g) {

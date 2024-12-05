@@ -41,6 +41,9 @@ public class SplendorGameScreen extends JPanel {
 
     private ReserveInventory reserveInventory;
 
+    private int winnerIndex = 0;
+    private boolean gameEnd = false;
+
     public SplendorGameScreen(CardLoader cardLoader, int playerCount) {
         this.playerCount = playerCount;
         
@@ -134,6 +137,7 @@ public class SplendorGameScreen extends JPanel {
         for (int i = 0; i < playerCount; i++) {
             JLabel scoreLabel = new JLabel("Player " + (i + 1) + ": 0");
             scoreLabel.setForeground(Color.WHITE);
+            if (i == 0) scoreLabel.setForeground(Color.YELLOW);
             scoreLabel.setFont(new Font("Gothic", Font.BOLD, 20));
             scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
             add(scoreLabel);
@@ -168,6 +172,18 @@ public class SplendorGameScreen extends JPanel {
     // New method to check for a winner
     private void checkForWinner(int playerIndex) {
         if (playerScores.get(playerIndex) >= 15) {
+
+            winnerIndex = playerIndex;
+            gameEnd = true;
+            System.out.println("FINAL TURNS");
+
+        }
+    }
+
+    private void transitionToEnd()
+    {
+
+        if (gameEnd && playerTurn == 0) {
             // Player has won - close the game window and open end screen
             SwingUtilities.invokeLater(() -> {
                 // Get the parent window (JFrame)
@@ -175,11 +191,12 @@ public class SplendorGameScreen extends JPanel {
                 if (parentFrame != null) {
                     parentFrame.dispose(); // Close the game window
                 }
-                
+
                 // Open the game end screen with the winning player number
-                new GameEndScreen(playerIndex + 1).setVisible(true);
+                new GameEndScreen(winnerIndex + 1).setVisible(true);
             });
         }
+
     }
 
     // Update the method to show current/max tokens
@@ -246,6 +263,7 @@ public class SplendorGameScreen extends JPanel {
     public void nextPlayerTurn() {
         playerTurn = (playerTurn + 1) % playerCount;
         cycleInventory.showSpecificPlayer(playerTurn);
+        transitionToEnd();
     }
 
     public CycleInventory getCycleInventory() {

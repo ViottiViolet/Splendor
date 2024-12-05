@@ -1,0 +1,196 @@
+package Nobles;
+import Cards.Card;
+import Game.Inventory.TokenInventory;
+import Game.Main.SplendorGameScreen;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.io.*;
+import java.awt.image.*;
+public class NobleLoader {
+    private String nobleImage, file, line, nobleName, imageName;
+    private static final int NOBLE_WIDTH = 120;
+    private static final int NOBLE_HEIGHT = 180;
+    private static final float HOVER_SCALE = 1.08f;
+
+    public NobleLoader(String file){
+        this.file = file;
+    }
+    public void loadNobles() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+
+
+                nobleName = parts[0];
+                int diamondCost = Integer.parseInt(parts[1].trim());
+                int sapphireCost = Integer.parseInt(parts[2].trim());
+                int emeraldCost = Integer.parseInt(parts[3].trim());
+                int rubyCost = Integer.parseInt(parts[4].trim());
+                int onyxCost = Integer.parseInt(parts[5].trim());
+                imageName = parts[6];
+
+                Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost, imageName);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JPanel createNobles(Stack<Noble> nobleStack) {
+        JPanel grid = new JPanel(new GridLayout(5, 1, 10, 15));
+        grid.setOpaque(false);
+
+        while (!nobleStack.isEmpty()) {
+            Noble noble = nobleStack.pop();
+            JPanel noblePanel = new JPanel();
+            noblePanel.setSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
+
+            JLabel imageLabel = new JLabel();
+            if (noble.getImage() != null) {
+                ImageIcon icon = new ImageIcon(noble.getImage().getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
+                imageLabel.setIcon(icon);
+            } else {
+                imageLabel.setText("");
+                imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+            noblePanel.add(imageLabel, BorderLayout.CENTER);
+        }
+
+        return grid;
+    }
+
+    private void addNobleToGrid(JPanel grid, Stack<Noble> nobleStack) {
+        if (!nobleStack.isEmpty()) {
+            Noble noble = nobleStack.pop();
+            BufferedImage nobleImage = noble.getImage();
+            ImageIcon nobleIcon = new ImageIcon(nobleImage.getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
+            JLabel nobleLabel = createClickableLabel(nobleIcon, noble, nobleStack, grid);
+            grid.add(nobleLabel);
+        } else {
+            JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
+            grid.add(emptyLabel);
+        }
+    }
+
+    private JLabel createClickableLabel(ImageIcon icon, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
+        JLabel label = new JLabel(icon) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                if (getClientProperty("hovered") != null && (Boolean) getClientProperty("hovered")) {
+                    double scale = HOVER_SCALE;
+                    int w = getWidth();
+                    int h = getHeight();
+                    int x = (int) (w - (w * scale)) / 2;
+                    int y = (int) (h - (h * scale)) / 2;
+
+                    g2d.translate(x, y);
+                    g2d.scale(scale, scale);
+                }
+                super.paintComponent(g2d);
+                g2d.dispose();
+            }
+        };
+
+        label.setPreferredSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
+
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                label.putClientProperty("hovered", false);
+                label.repaint();
+            }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                nobleClicked(label, noble, nobleStack, grid);
+                System.out.println("mouseClicked"); //remove later
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                label.putClientProperty("hovered", true);
+                label.repaint();
+            }
+
+        });
+
+        return label;
+    }
+    private void nobleClicked(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
+        String[] options = { "Take","Cancel" };
+        int choice = JOptionPane.showOptionDialog(grid, "What would you like to do?", "Action",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (choice == 0) {
+            takeNoble(clickedLabel, noble, nobleStack, grid);
+        }
+
+    }
+    private void takeNoble(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
+        // Locate the game screen
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            TokenInventory tokenInventory = gameScreen.getPlayerInventory();
+
+            // Get the noble's cost and player's card bonuses
+            int[] nobleCosts = noble.getCost(); // Cost for each gem type
+            int[] playerBonuses = new int[]{
+                    tokenInventory.getBonusCount("white"),
+                    tokenInventory.getBonusCount("blue"),
+                    tokenInventory.getBonusCount("green"),
+                    tokenInventory.getBonusCount("red"),
+                    tokenInventory.getBonusCount("black")
+            };
+
+            boolean canTakeNoble = true;
+            for (int i = 0; i < nobleCosts.length; i++) {
+                if (nobleCosts[i] > playerBonuses[i]) {
+                    canTakeNoble = false;
+                    break;
+                }
+            }
+
+            // Display that the player is not able to take the noble
+            if (!canTakeNoble) {
+                JOptionPane.showMessageDialog(
+                        grid,
+                        "You do not have enough cards to take this noble.",
+                        "Insufficient Resources",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            // Update player's score with the noble's prestige points
+            int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
+            gameScreen.updatePlayerScore(currentPlayerIndex, noble.getPrestige());
+
+
+            grid.remove(clickedLabel);
+
+            if (!nobleStack.isEmpty()) {
+                addNobleToGrid(grid, nobleStack);
+            } else {
+                JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
+                grid.add(emptyLabel);
+            }
+
+            // Revalidate and repaint the grid to update the UI
+            grid.revalidate();
+            grid.repaint();
+
+            gameScreen.nextPlayerTurn();
+        }
+    }
+}

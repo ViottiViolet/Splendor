@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import Game.Inventory.ReserveInventory;
 import Game.Inventory.TokenInventory;
-import Game.Inventory.CycleInventory;
 import Game.Main.SplendorGameScreen;
 import Game.Token.TokenManager;
 

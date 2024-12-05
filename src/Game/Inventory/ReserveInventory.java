@@ -2,7 +2,6 @@ package Game.Inventory;
 
 import Cards.Card;
 import Game.Main.SplendorGameScreen;
-import Game.Token.TokenManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

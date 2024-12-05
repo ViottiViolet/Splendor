@@ -131,7 +131,6 @@ public class SplendorGameScreen extends JPanel {
     // Add player score labels to the screen
     private void addPlayerScoreLabels() {
         playerScoreLabels = new ArrayList<>();
-        
         for (int i = 0; i < playerCount; i++) {
             JLabel scoreLabel = new JLabel("Player " + (i + 1) + ": 0");
             scoreLabel.setForeground(Color.WHITE);
@@ -157,8 +156,29 @@ public class SplendorGameScreen extends JPanel {
     // Method to update player score when buying a card
     public void updatePlayerScore(int playerIndex, int prestigePoints) {
         if (playerIndex >= 0 && playerIndex < playerScores.size()) {
+            // Update the score
             playerScores.set(playerIndex, playerScores.get(playerIndex) + prestigePoints);
             playerScoreLabels.get(playerIndex).setText("Player " + (playerIndex + 1) + ": " + playerScores.get(playerIndex));
+            
+            // Check if the current player has won
+            checkForWinner(playerIndex);
+        }
+    }
+
+    // New method to check for a winner
+    private void checkForWinner(int playerIndex) {
+        if (playerScores.get(playerIndex) >= 15) {
+            // Player has won - close the game window and open end screen
+            SwingUtilities.invokeLater(() -> {
+                // Get the parent window (JFrame)
+                JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                if (parentFrame != null) {
+                    parentFrame.dispose(); // Close the game window
+                }
+                
+                // Open the game end screen with the winning player number
+                new GameEndScreen(playerIndex + 1).setVisible(true);
+            });
         }
     }
 
@@ -191,7 +211,6 @@ public class SplendorGameScreen extends JPanel {
         reserveInventory.setBounds(reserveX, reserveY, 320, 170);
 
         // Position player score labels
-        int scoreLabelsY = 100;
         int scoreLabelsHeight = TOKEN_INVENTORY_HEIGHT / playerCount;
         int scoreLabelsWidth = TOKEN_INVENTORY_WIDTH / playerCount;
         for (int i = 0; i < playerScoreLabels.size(); i++) {

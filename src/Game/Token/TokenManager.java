@@ -37,6 +37,7 @@ public class TokenManager {
     private TokenInventory currentPlayerInventory;
 
     private final SplendorGameScreen gameScreen; // Add reference to game screen
+    @SuppressWarnings("unused")
     private final CycleInventory cycleInventory;
     private int totalTokenCount = 0; // Track total tokens
     private static final int MAX_TOKENS = 10;

@@ -1,5 +1,7 @@
 package Nobles;
 import Cards.Card;
+import Game.Inventory.TokenInventory;
+import Game.Main.SplendorGameScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,7 +67,6 @@ public class NobleLoader {
     }
 
     private void addNobleToGrid(JPanel grid, Stack<Noble> nobleStack) {
-
         if (!nobleStack.isEmpty()) {
             Noble noble = nobleStack.pop();
             BufferedImage nobleImage = noble.getImage();
@@ -126,6 +127,70 @@ public class NobleLoader {
         String[] options = { "Take","Cancel" };
         int choice = JOptionPane.showOptionDialog(grid, "What would you like to do?", "Action",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (choice == 0) {
+            takeNoble(clickedLabel, noble, nobleStack, grid);
+        }
 
+    }
+    private void takeNoble(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
+        // Locate the game screen
+        Container parent = grid;
+        while (!(parent instanceof SplendorGameScreen) && parent != null) {
+            parent = parent.getParent();
+        }
+
+        if (parent instanceof SplendorGameScreen) {
+            SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+            TokenInventory tokenInventory = gameScreen.getPlayerInventory();
+
+            // Get the noble's cost and player's card bonuses
+            int[] nobleCosts = noble.getCost(); // Cost for each gem type
+            int[] playerBonuses = new int[]{
+                    tokenInventory.getBonusCount("white"),
+                    tokenInventory.getBonusCount("blue"),
+                    tokenInventory.getBonusCount("green"),
+                    tokenInventory.getBonusCount("red"),
+                    tokenInventory.getBonusCount("black")
+            };
+
+            boolean canTakeNoble = true;
+            for (int i = 0; i < nobleCosts.length; i++) {
+                if (nobleCosts[i] > playerBonuses[i]) {
+                    canTakeNoble = false;
+                    break;
+                }
+            }
+
+            // Display that the player is not able to take the noble
+            if (!canTakeNoble) {
+                JOptionPane.showMessageDialog(
+                        grid,
+                        "You do not have enough cards to take this noble.",
+                        "Insufficient Resources",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            // Update player's score with the noble's prestige points
+            int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
+            gameScreen.updatePlayerScore(currentPlayerIndex, noble.getPrestige());
+
+
+            grid.remove(clickedLabel);
+
+            if (!nobleStack.isEmpty()) {
+                addNobleToGrid(grid, nobleStack);
+            } else {
+                JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
+                grid.add(emptyLabel);
+            }
+
+            // Revalidate and repaint the grid to update the UI
+            grid.revalidate();
+            grid.repaint();
+
+            gameScreen.nextPlayerTurn();
+        }
     }
 }

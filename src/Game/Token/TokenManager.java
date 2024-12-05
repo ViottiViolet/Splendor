@@ -37,6 +37,7 @@ public class TokenManager {
     private TokenInventory currentPlayerInventory;
 
     private final SplendorGameScreen gameScreen; // Add reference to game screen
+    @SuppressWarnings("unused")
     private final CycleInventory cycleInventory;
     private int totalTokenCount = 0; // Track total tokens
     private static final int MAX_TOKENS = 10;
@@ -89,21 +90,21 @@ public class TokenManager {
         }
 
         // Create reset button
-        resetLabel = new JLabel("reset");
-        resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        resetLabel = new JLabel("Reset Tokens");
+        resetLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         resetLabel.setForeground(Color.WHITE);
-        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 50, 25);
+        resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 200, 25);
         tokenPanel.add(resetLabel);
 
         resetLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                resetLabel.setForeground(Color.YELLOW);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                resetLabel.setForeground(Color.WHITE);
             }
 
 
@@ -113,21 +114,21 @@ public class TokenManager {
             }
         });
 
-        confirmLabel = new JLabel("confirm");
-        confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        confirmLabel = new JLabel("Confirm Tokens");
+        confirmLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         confirmLabel.setForeground(Color.WHITE);
-        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 75, 25);
+        confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 200, 25);
         tokenPanel.add(confirmLabel);
 
         confirmLabel.addMouseListener(new MouseAdapter() {
 
             public void mouseEntered(MouseEvent e) {
-
+                confirmLabel.setForeground(Color.YELLOW);
             }
 
 
             public void mouseExited(MouseEvent e) {
-
+                confirmLabel.setForeground(Color.WHITE);
             }
 
 
@@ -312,7 +313,7 @@ public class TokenManager {
                 if (tokensTakenInTurn.contains(color))
                 {
 
-                    if (availableTokens.get(color) <= 3)
+                    if (availableTokens.get(color) <= 2)
                     {
                         JOptionPane.showMessageDialog(
                                 tokenPanel,
@@ -388,9 +389,13 @@ public class TokenManager {
 
     public void removeToken(String color, int num) {
         int currentCount = availableTokens.get(color);
-        if (currentCount > 0) {
+        if (currentCount - num > 0) {
             availableTokens.put(color, currentCount - num);
             updateCountLabel(color, currentCount - num);
+        }
+        else {
+            availableTokens.put(color, 0);
+            updateCountLabel(color, 0);
         }
     }
 
@@ -476,6 +481,12 @@ public class TokenManager {
 
     public void setPlayerTokenCount(int num) {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
+        gameScreen.updateTotalTokensLabel(totalTokenCount);
+        tokenPanel.repaint();
+    }
+
+    public void setPlayerTokenCountNumber(int num) {
+        playerTokenCounts.put(currentPlayer, num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
     }

@@ -160,16 +160,6 @@ public class SplendorHomeScreen extends JFrame {
         transitionOverlay.startFadeOut();
     }
 
-    // Update the startGameWithTransition method
-    private void startGameWithTransition() {
-        // Ensure the overlay covers the entire window
-        transitionOverlay.setBounds(0, 0, getWidth(), getHeight());
-        transitionOverlay.setVisible(true);
-
-        // Start the transition
-        transitionOverlay.startFadeOut();
-    }
-
     public SplendorHomeScreen() {
         setTitle("Splendor Home");
         setDefaultCloseOperation(EXIT_ON_CLOSE);

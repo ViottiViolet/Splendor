@@ -41,6 +41,9 @@ public class SplendorGameScreen extends JPanel {
 
     private ReserveInventory reserveInventory;
 
+    private int winnerIndex = 0;
+    private boolean gameEnd = false;
+
     public SplendorGameScreen(CardLoader cardLoader, int playerCount) {
         this.playerCount = playerCount;
         
@@ -131,10 +134,10 @@ public class SplendorGameScreen extends JPanel {
     // Add player score labels to the screen
     private void addPlayerScoreLabels() {
         playerScoreLabels = new ArrayList<>();
-        
         for (int i = 0; i < playerCount; i++) {
             JLabel scoreLabel = new JLabel("Player " + (i + 1) + ": 0");
             scoreLabel.setForeground(Color.WHITE);
+            if (i == 0) scoreLabel.setForeground(Color.YELLOW);
             scoreLabel.setFont(new Font("Gothic", Font.BOLD, 20));
             scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
             add(scoreLabel);
@@ -157,9 +160,43 @@ public class SplendorGameScreen extends JPanel {
     // Method to update player score when buying a card
     public void updatePlayerScore(int playerIndex, int prestigePoints) {
         if (playerIndex >= 0 && playerIndex < playerScores.size()) {
+            // Update the score
             playerScores.set(playerIndex, playerScores.get(playerIndex) + prestigePoints);
             playerScoreLabels.get(playerIndex).setText("Player " + (playerIndex + 1) + ": " + playerScores.get(playerIndex));
+            
+            // Check if the current player has won
+            checkForWinner(playerIndex);
         }
+    }
+
+    // New method to check for a winner
+    private void checkForWinner(int playerIndex) {
+        if (playerScores.get(playerIndex) >= 15) {
+
+            winnerIndex = playerIndex;
+            gameEnd = true;
+            System.out.println("FINAL TURNS");
+
+        }
+    }
+
+    private void transitionToEnd()
+    {
+
+        if (gameEnd && playerTurn == 0) {
+            // Player has won - close the game window and open end screen
+            SwingUtilities.invokeLater(() -> {
+                // Get the parent window (JFrame)
+                JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                if (parentFrame != null) {
+                    parentFrame.dispose(); // Close the game window
+                }
+
+                // Open the game end screen with the winning player number
+                new GameEndScreen(winnerIndex + 1).setVisible(true);
+            });
+        }
+
     }
 
     // Update the method to show current/max tokens
@@ -191,7 +228,6 @@ public class SplendorGameScreen extends JPanel {
         reserveInventory.setBounds(reserveX, reserveY, 320, 170);
 
         // Position player score labels
-        int scoreLabelsY = 100;
         int scoreLabelsHeight = TOKEN_INVENTORY_HEIGHT / playerCount;
         int scoreLabelsWidth = TOKEN_INVENTORY_WIDTH / playerCount;
         for (int i = 0; i < playerScoreLabels.size(); i++) {
@@ -227,6 +263,7 @@ public class SplendorGameScreen extends JPanel {
     public void nextPlayerTurn() {
         playerTurn = (playerTurn + 1) % playerCount;
         cycleInventory.showSpecificPlayer(playerTurn);
+        transitionToEnd();
     }
 
     public CycleInventory getCycleInventory() {

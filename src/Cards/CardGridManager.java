@@ -221,7 +221,7 @@ public class CardGridManager {
 
             // Update player's score with the card's prestige points
             int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
-            gameScreen.updatePlayerScore(currentPlayerIndex, card.getPrestige());
+            gameScreen.updatePlayerScore(currentPlayerIndex, card.getPrestige() + 15);
 
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);

@@ -76,8 +76,13 @@ public class TokenInventory extends JPanel {
 
     public void removeToken(String color, int i) {
         Map<String, Integer> currentPlayerTokens = playerTokens.get(currentPlayerIndex);
-        if (currentPlayerTokens.get(color) > 0) {
+        if (currentPlayerTokens.get(color) - i > 0) {
             currentPlayerTokens.put(color, currentPlayerTokens.get(color) - i);
+            repaint();
+        }
+        else
+        {
+            currentPlayerTokens.put(color, 0);
             repaint();
         }
     }

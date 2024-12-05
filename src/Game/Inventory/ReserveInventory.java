@@ -192,11 +192,16 @@ public class ReserveInventory extends JPanel {
                     tempTokens[i]--;
                     temp[i]--;
                 }
+                if (tempTokens[i] < 0) tempTokens[i] = 0;
                 if (temp[i] < 0) temp[i] = 0;
                 i++;
             }
+            int remainingCost = temp[0]+temp[1]+temp[2]+temp[3]+temp[4];
+
             // if player cannot afford, show warning. otherwise, continue with purchase
-            if (!Arrays.equals(temp, new int[]{0, 0, 0, 0, 0})) {
+            // if player can spend gold tokens on remaining costs, continue
+            if (remainingCost != 0 && remainingCost > tokenInventory.getTokenCount("gold"))
+            {
                 JOptionPane.showMessageDialog(
                         this,
                         "You do not have enough tokens or bonuses to purchase this card.",
@@ -215,8 +220,8 @@ public class ReserveInventory extends JPanel {
                 if (tokenInventory.getTokenCount(color) != 0) {
                     gameScreen.getTokenManager().addToken(color, card.getCosts()[i]);
                     gameScreen.getTokenManager().removeToken(color, tokenInventory.getBonusCount(color));
-                    gameScreen.getTokenManager().setPlayerTokenCount(-card.getCosts()[i]);
-                    gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
+                    gameScreen.getTokenManager().setPlayerTokenCountNumber(tempTokens[i]);
+                    //gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
                     tokenInventory.removeToken(color, card.getCosts()[i]);
                     tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
                 }
@@ -228,6 +233,9 @@ public class ReserveInventory extends JPanel {
                 tokenInventory.addBonus(tokenColor);
             }
 
+            tokenInventory.removeToken("gold", remainingCost);
+            gameScreen.getTokenManager().addToken("gold", remainingCost);
+
             playerReservedCards.get(currentPlayerIndex).remove(card);
             playerCardLabels.get(currentPlayerIndex).remove(clickedLabel);
 
@@ -235,6 +243,7 @@ public class ReserveInventory extends JPanel {
             revalidate();
             repaint();
 
+            gameScreen.nextPlayerTurn();
         }
     }
 

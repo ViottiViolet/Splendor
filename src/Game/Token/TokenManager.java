@@ -388,9 +388,13 @@ public class TokenManager {
 
     public void removeToken(String color, int num) {
         int currentCount = availableTokens.get(color);
-        if (currentCount > 0) {
+        if (currentCount - num > 0) {
             availableTokens.put(color, currentCount - num);
             updateCountLabel(color, currentCount - num);
+        }
+        else {
+            availableTokens.put(color, 0);
+            updateCountLabel(color, 0);
         }
     }
 
@@ -476,6 +480,12 @@ public class TokenManager {
 
     public void setPlayerTokenCount(int num) {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
+        gameScreen.updateTotalTokensLabel(totalTokenCount);
+        tokenPanel.repaint();
+    }
+
+    public void setPlayerTokenCountNumber(int num) {
+        playerTokenCounts.put(currentPlayer, num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
     }

@@ -91,7 +91,7 @@ public class TokenManager {
 
         // Create reset button
         resetLabel = new JLabel("Reset Tokens");
-        resetLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        resetLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         resetLabel.setForeground(Color.WHITE);
         resetLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 25, 200, 25);
         tokenPanel.add(resetLabel);
@@ -115,7 +115,7 @@ public class TokenManager {
         });
 
         confirmLabel = new JLabel("Confirm Tokens");
-        confirmLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        confirmLabel.setFont(new Font("Algerian", Font.PLAIN, 16));
         confirmLabel.setForeground(Color.WHITE);
         confirmLabel.setBounds(tokenPanel.getWidth()/2,tokenPanel.getHeight()/2 + 75, 200, 25);
         tokenPanel.add(confirmLabel);
@@ -389,9 +389,13 @@ public class TokenManager {
 
     public void removeToken(String color, int num) {
         int currentCount = availableTokens.get(color);
-        if (currentCount > 0) {
+        if (currentCount - num > 0) {
             availableTokens.put(color, currentCount - num);
             updateCountLabel(color, currentCount - num);
+        }
+        else {
+            availableTokens.put(color, 0);
+            updateCountLabel(color, 0);
         }
     }
 
@@ -477,6 +481,12 @@ public class TokenManager {
 
     public void setPlayerTokenCount(int num) {
         playerTokenCounts.put(currentPlayer, totalTokenCount += num);
+        gameScreen.updateTotalTokensLabel(totalTokenCount);
+        tokenPanel.repaint();
+    }
+
+    public void setPlayerTokenCountNumber(int num) {
+        playerTokenCounts.put(currentPlayer, num);
         gameScreen.updateTotalTokensLabel(totalTokenCount);
         tokenPanel.repaint();
     }

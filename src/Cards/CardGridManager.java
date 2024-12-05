@@ -170,6 +170,7 @@ public class CardGridManager {
                     tempTokens[i]--;
                     temp[i]--;
                 }
+                if (tempTokens[i] < 0) tempTokens[i] = 0;
                 if (temp[i] < 0) temp[i] = 0;
                 i++;
             }

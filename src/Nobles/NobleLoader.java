@@ -1,8 +1,9 @@
 package Nobles;
-import Cards.Card;
+
 import Game.Inventory.TokenInventory;
 import Game.Main.SplendorGameScreen;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -10,69 +11,83 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.io.*;
-import java.awt.image.*;
+
 public class NobleLoader {
-    private String nobleImage, file, line, nobleName, imageName;
-    private static final int NOBLE_WIDTH = 120;
-    private static final int NOBLE_HEIGHT = 180;
+    private String file;
+    private ArrayList<Noble> nobleList;
+    public static final int NOBLE_WIDTH = 165;
+    public static final int NOBLE_HEIGHT = 165;
     private static final float HOVER_SCALE = 1.08f;
 
-    public NobleLoader(String file){
+    public NobleLoader(String file) {
         this.file = file;
+        this.nobleList = new ArrayList<>();
     }
+
     public void loadNobles() throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\t");
-
-
-                nobleName = parts[0];
+                String nobleName = parts[0];
                 int diamondCost = Integer.parseInt(parts[1].trim());
                 int sapphireCost = Integer.parseInt(parts[2].trim());
                 int emeraldCost = Integer.parseInt(parts[3].trim());
                 int rubyCost = Integer.parseInt(parts[4].trim());
                 int onyxCost = Integer.parseInt(parts[5].trim());
-                imageName = parts[6];
+                String imageName = nobleName;
 
-                Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost, imageName);
-
+                Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost,
+                        imageName);
+                nobleList.add(noble);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public JPanel createNobles(Stack<Noble> nobleStack) {
-        JPanel grid = new JPanel(new GridLayout(5, 1, 10, 15));
+    public JPanel createNobles() {
+        // Shuffle the list of nobles
+        Collections.shuffle(nobleList);
+    
+        // Create a grid panel for nobles with 3x2 layout
+        JPanel grid = new JPanel(new GridLayout(3, 2, 10, 15));
         grid.setOpaque(false);
-
-        while (!nobleStack.isEmpty()) {
-            Noble noble = nobleStack.pop();
-            JPanel noblePanel = new JPanel();
-            noblePanel.setSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
-
-            JLabel imageLabel = new JLabel();
-            if (noble.getImage() != null) {
-                ImageIcon icon = new ImageIcon(noble.getImage().getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
-                imageLabel.setIcon(icon);
-            } else {
-                imageLabel.setText("");
-                imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            }
-            noblePanel.add(imageLabel, BorderLayout.CENTER);
+    
+        // Create a new stack with the top 6 nobles or all nobles if less than 6
+        Stack<Noble> nobleStack = new Stack<>();
+        int noblesCount = Math.min(5, nobleList.size());
+        for (int i = 0; i < noblesCount; i++) {
+            nobleStack.push(nobleList.get(i));
         }
-
+    
+        while (!nobleStack.isEmpty()) {
+            addNobleToGrid(grid, nobleStack);
+        }
+    
+        // If fewer than 6 nobles, fill remaining slots with empty labels
+        while (grid.getComponentCount() < 5) {
+            JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
+            emptyLabel.setPreferredSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
+            grid.add(emptyLabel);
+        }
+    
         return grid;
     }
 
     private void addNobleToGrid(JPanel grid, Stack<Noble> nobleStack) {
         if (!nobleStack.isEmpty()) {
             Noble noble = nobleStack.pop();
-            BufferedImage nobleImage = noble.getImage();
-            ImageIcon nobleIcon = new ImageIcon(nobleImage.getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
-            JLabel nobleLabel = createClickableLabel(nobleIcon, noble, nobleStack, grid);
-            grid.add(nobleLabel);
+            try {
+                BufferedImage nobleImage = ImageIO.read(new File(noble.getImage())); // Load the image
+                ImageIcon nobleIcon = new ImageIcon(nobleImage.getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
+                JLabel nobleLabel = createClickableLabel(nobleIcon, noble, nobleStack, grid);
+                grid.add(nobleLabel);
+            } catch (IOException e) {
+                e.printStackTrace();
+                JLabel errorLabel = new JLabel("Image Load Error", SwingConstants.CENTER);
+                grid.add(errorLabel);
+            }
         } else {
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
             grid.add(emptyLabel);
@@ -107,10 +122,11 @@ public class NobleLoader {
                 label.putClientProperty("hovered", false);
                 label.repaint();
             }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 nobleClicked(label, noble, nobleStack, grid);
-                System.out.println("mouseClicked"); //remove later
+                System.out.println("mouseClicked"); // remove later
             }
 
             @Override
@@ -123,8 +139,9 @@ public class NobleLoader {
 
         return label;
     }
+
     private void nobleClicked(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
-        String[] options = { "Take","Cancel" };
+        String[] options = { "Take", "Cancel" };
         int choice = JOptionPane.showOptionDialog(grid, "What would you like to do?", "Action",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (choice == 0) {
@@ -132,6 +149,7 @@ public class NobleLoader {
         }
 
     }
+
     private void takeNoble(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
         // Locate the game screen
         Container parent = grid;
@@ -145,7 +163,7 @@ public class NobleLoader {
 
             // Get the noble's cost and player's card bonuses
             int[] nobleCosts = noble.getCost(); // Cost for each gem type
-            int[] playerBonuses = new int[]{
+            int[] playerBonuses = new int[] {
                     tokenInventory.getBonusCount("white"),
                     tokenInventory.getBonusCount("blue"),
                     tokenInventory.getBonusCount("green"),
@@ -167,8 +185,7 @@ public class NobleLoader {
                         grid,
                         "You do not have enough cards to take this noble.",
                         "Insufficient Resources",
-                        JOptionPane.WARNING_MESSAGE
-                );
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -176,9 +193,9 @@ public class NobleLoader {
             int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
             gameScreen.updatePlayerScore(currentPlayerIndex, noble.getPrestige());
 
-
             grid.remove(clickedLabel);
 
+            // If there are more nobles in the list, add a new noble to the grid
             if (!nobleStack.isEmpty()) {
                 addNobleToGrid(grid, nobleStack);
             } else {
@@ -192,5 +209,10 @@ public class NobleLoader {
 
             gameScreen.nextPlayerTurn();
         }
+    }
+
+    // Getter method to access the list of nobles
+    public ArrayList<Noble> getNobleList() {
+        return nobleList;
     }
 }

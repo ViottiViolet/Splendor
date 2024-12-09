@@ -1,10 +1,12 @@
 package Game.Inventory;
 
 import javax.swing.*;
+
+import Cards.Card;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import Cards.Card;
 
 public class TokenInventory extends JPanel {
     private final Map<Integer, Map<String, Integer>> playerTokens;

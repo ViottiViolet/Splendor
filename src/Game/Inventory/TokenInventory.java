@@ -1,10 +1,12 @@
 package Game.Inventory;
 
 import javax.swing.*;
+
+import Cards.Card;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import Cards.Card;
 
 public class TokenInventory extends JPanel {
     private final Map<Integer, Map<String, Integer>> playerTokens;
@@ -79,9 +81,7 @@ public class TokenInventory extends JPanel {
         if (currentPlayerTokens.get(color) - i > 0) {
             currentPlayerTokens.put(color, currentPlayerTokens.get(color) - i);
             repaint();
-        }
-        else
-        {
+        } else {
             currentPlayerTokens.put(color, 0);
             repaint();
         }
@@ -102,6 +102,7 @@ public class TokenInventory extends JPanel {
     public int getTokenCount(String color) {
         return playerTokens.get(currentPlayerIndex).get(color);
     }
+
     public int getBonusCount(String color) {
         return playerBonuses.get(currentPlayerIndex).get(color);
     }

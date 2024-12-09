@@ -238,11 +238,13 @@ public class ReserveInventory extends JPanel {
             playerReservedCards.get(currentPlayerIndex).remove(card);
             playerCardLabels.get(currentPlayerIndex).remove(clickedLabel);
 
+            gameScreen.nextPlayerTurn();
+
             ((JPanel)getComponent(1)).remove(clickedLabel);
             revalidate();
             repaint();
 
-            gameScreen.nextPlayerTurn();
+
         }
     }
 

@@ -1,13 +1,9 @@
 package Nobles;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
 public class Noble {
     private String imageName;
     private int diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost;
+    @SuppressWarnings("unused")
     private String nobleName;
     public Noble(String nobleName, int diamondCost, int sapphireCost, int emeraldCost, int rubyCost, int onyxCost, String imageName) {
         this.nobleName = nobleName;
@@ -31,12 +27,7 @@ public class Noble {
         return costs;
     }
 
-    public BufferedImage getImage() {
-        try {
-            return ImageIO.read(new File(imageName));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String getImage(){
+        return imageName;
     }
 }

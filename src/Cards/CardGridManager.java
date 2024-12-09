@@ -10,6 +10,7 @@ import Game.Token.TokenManager;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class CardGridManager {
@@ -84,10 +85,10 @@ public class CardGridManager {
 
                 if (parent instanceof SplendorGameScreen) {
                     gameScreen = (SplendorGameScreen) parent;
-                    if (gameScreen.getCycleInventory().getCurrentPlayerIndex() != gameScreen.getPlayerTurn()) return;
+                    if (gameScreen.getCycleInventory().getCurrentPlayerIndex() != gameScreen.getPlayerTurn())
+                        return;
                     handleCardClick(label, card, cardStack, grid);
                 }
-
 
             }
 
@@ -119,8 +120,7 @@ public class CardGridManager {
                         grid,
                         "You cannot collect tokens and cards in the same turn. Reset your tokens or confirm them.",
                         "Cannot Perform Multiple Actions",
-                        JOptionPane.WARNING_MESSAGE
-                );
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
         }
@@ -151,73 +151,95 @@ public class CardGridManager {
         if (parent instanceof SplendorGameScreen) {
             SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
             TokenInventory tokenInventory = gameScreen.getPlayerInventory();
+            TokenManager tokenManager = gameScreen.getTokenManager();
 
-            int[] tempTokens = new int[]{
+            int[] tempTokens = new int[] {
                     tokenInventory.getTokenCount("white"),
                     tokenInventory.getTokenCount("blue"),
                     tokenInventory.getTokenCount("green"),
                     tokenInventory.getTokenCount("red"),
                     tokenInventory.getTokenCount("black"),
             };
-            int[] temp = card.getCosts();
+
+            // Create a copy of original costs to track remaining costs
+            int[] remainingCosts = Arrays.copyOf(card.getCosts(), card.getCosts().length);
+
+            // Track which colors have been fully covered by bonuses
+            boolean[] fullyPaidByBonus = new boolean[remainingCosts.length];
+
+            // Subtract bonuses from costs
             int i = 0;
-            // goes through costs to see if player can afford with bonuses + tokens
-            for (String color : new String[]{"white", "blue", "green", "red", "black"})
-            {
-                temp[i] -= tokenInventory.getBonusCount(color);
-                while (temp[i] > 0 && tempTokens[i] > 0)
-                {
-                    tempTokens[i]--;
-                    temp[i]--;
+            for (String color : new String[] { "white", "blue", "green", "red", "black" }) {
+                int bonusCount = tokenInventory.getBonusCount(color);
+
+                // If bonuses fully cover the cost for this color
+                if (bonusCount >= card.getCosts()[i]) {
+                    remainingCosts[i] = 0;
+                    fullyPaidByBonus[i] = true;
+                } else {
+                    // Reduce remaining cost by bonus count
+                    remainingCosts[i] = Math.max(0, remainingCosts[i] - bonusCount);
                 }
-                if (tempTokens[i] < 0) tempTokens[i] = 0;
-                if (temp[i] < 0) temp[i] = 0;
+
                 i++;
             }
 
-            int remainingCost = temp[0]+temp[1]+temp[2]+temp[3]+temp[4];
+            // Calculate total remaining cost after bonuses
+            int totalRemainingCost = Arrays.stream(remainingCosts).sum();
 
-            // if player cannot afford, show warning. otherwise, continue with purchase
-            // if player can spend gold tokens on remaining costs, continue
-            if (remainingCost != 0 && remainingCost > tokenInventory.getTokenCount("gold"))
-            {
+            int totalAvailableTokens = 0;
+            for (int j = 0; j < remainingCosts.length; j++) {
+                if (!fullyPaidByBonus[j]) {
+                    totalAvailableTokens += Math.min(tempTokens[j], remainingCosts[j]);
+                }
+            }
+            // Include gold tokens in the total available count
+            totalAvailableTokens += tokenInventory.getTokenCount("gold");
+                       
+
+            int goldTokensNeeded = Math.max(0, totalRemainingCost - totalAvailableTokens);
+            if (goldTokensNeeded > tokenInventory.getTokenCount("gold")) {
                 JOptionPane.showMessageDialog(
                         grid,
                         "You do not have enough tokens or bonuses to purchase this card.",
                         "Not Enough Tokens",
-                        JOptionPane.WARNING_MESSAGE
-                );
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Map card gem type to token color
-            String tokenColor = mapGemToTokenColor(card.getGem());
+            // Deduct regular tokens used
+            i = 0;
+            for (String color : new String[] { "white", "blue", "green", "red", "black" }) {
+                if (!fullyPaidByBonus[i]) {
+                    int tokensToUse = Math.min(tempTokens[i], remainingCosts[i]);
 
-            // removes tokens from player inventory to buy card and adds bonuses back
-            i=0;
-            for (String color : new String[]{"white", "blue", "green", "red", "black"})
-            {
-                if (tokenInventory.getTokenCount(color)!=0)
-                {
-                    gameScreen.getTokenManager().addToken(color, card.getCosts()[i]);
-                    gameScreen.getTokenManager().removeToken(color, tokenInventory.getBonusCount(color));
-                    gameScreen.getTokenManager().setPlayerTokenCount(-card.getCosts()[i]);
-                    gameScreen.getTokenManager().setPlayerTokenCount(tokenInventory.getBonusCount(color));
-                    tokenInventory.removeToken(color, card.getCosts()[i]);
-                    tokenInventory.addToken(color, tokenInventory.getBonusCount(color));
-                    if (tokenInventory.getTokenCount(color) < 0) tokenInventory.addToken(color, -tokenInventory.getTokenCount(color));
+                    // Remove tokens from player inventory
+                    tokenInventory.removeToken(color, tokensToUse);
+
+                    // Update the token manager's total token count
+                    tokenManager.setPlayerTokenCount(-tokensToUse);
+
+                    // Add tokens back to the token pool
+                    tokenManager.addToken(color, tokensToUse);
                 }
                 i++;
             }
+
+            goldTokensNeeded = Math.max(0, totalRemainingCost - (totalAvailableTokens - tokenInventory.getTokenCount("gold")));
+            if (goldTokensNeeded > 0) {
+                tokenInventory.removeToken("gold", goldTokensNeeded);
+                tokenManager.setPlayerTokenCount(-goldTokensNeeded);
+                tokenManager.addToken("gold", goldTokensNeeded);
+            }
+            
+
+            // Map card gem type to token color
+            String tokenColor = mapGemToTokenColor(card.getGem());
 
             // Add bonus to player's inventory
             if (tokenColor != null) {
                 tokenInventory.addBonus(tokenColor);
             }
-
-            // take remaining costs from gold tokens, if applicable
-            tokenInventory.removeToken("gold", remainingCost);
-            gameScreen.getTokenManager().addToken("gold", remainingCost);
 
             // Update player's score with the card's prestige points
             int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
@@ -226,6 +248,7 @@ public class CardGridManager {
             // Replace the card in the grid with a new one
             replaceCardInGrid(clickedLabel, cardStack, grid);
 
+            // Move to the next player's turn
             gameScreen.nextPlayerTurn();
         }
     }

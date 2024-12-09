@@ -9,11 +9,10 @@ import java.util.Stack;
 import Cards.Card;
 import Cards.CardGridManager;
 import Cards.CardLoader;
-import Game.Inventory.CycleInventory;
-import Game.Inventory.ReserveInventory;
-import Game.Inventory.TokenInventory;
 import Game.Token.TokenManager;
 import Nobles.NobleLoader;
+import Game.Inventory.*;
+
 
 public class SplendorGameScreen extends JPanel {
     private final ImageIcon bImageIcon;
@@ -24,6 +23,7 @@ public class SplendorGameScreen extends JPanel {
     private final TokenManager tokenManager;
     private JLabel totalTokensLabel;
     private JPanel nobleGridPanel; // Noble grid panel
+    private nobleInventory nobleInventory; // Declare the NobleInventory
 
 
     private CycleInventory cycleInventory;
@@ -98,6 +98,7 @@ public class SplendorGameScreen extends JPanel {
             updateTotalTokensLabel(tokenManager.getPlayerTokenCount(currentPlayerIndex));
             playerNumberLabel.setText("Player " + (currentPlayerIndex + 1));
             reserveInventory.switchToPlayer(currentPlayerIndex);
+            nobleInventory.switchToPlayer(currentPlayerIndex);
 
             // Update player score label highlighting
             updatePlayerScoreLabelHighlighting(currentPlayerIndex);
@@ -112,6 +113,10 @@ public class SplendorGameScreen extends JPanel {
 
         reserveInventory = new ReserveInventory();
         add(reserveInventory);
+
+        // Instantiate and add NobleInventory
+        nobleInventory = new nobleInventory();
+        add(nobleInventory);
 
         // Add player score labels
         addPlayerScoreLabels();
@@ -230,7 +235,7 @@ public class SplendorGameScreen extends JPanel {
         gridPanel2.setBounds(gridX - 150, 135 + GRID_HEIGHT + VERTICAL_GAP - 5, GRID_WIDTH, GRID_HEIGHT);
         gridPanel1.setBounds(gridX - 150, 110 + (GRID_HEIGHT + VERTICAL_GAP) * 2, GRID_WIDTH, GRID_HEIGHT);
     
-        int nobleGridX = gridX + GRID_WIDTH + 50;
+        int nobleGridX = gridX + GRID_WIDTH - 100;
         int nobleGridY = 150;
         int nobleGridWidth = 2 * (NobleLoader.NOBLE_WIDTH + 10) + 10; // Account for horizontal gap
         int nobleGridHeight = 3 * (NobleLoader.NOBLE_HEIGHT + 15) + 15; // Account for vertical gap
@@ -247,6 +252,11 @@ public class SplendorGameScreen extends JPanel {
         int reserveX = (getWidth() - TOKEN_INVENTORY_WIDTH) / 2;
         int reserveY = cycleInventory.getY() + cycleInventory.getHeight() + 10;
         reserveInventory.setBounds(reserveX, reserveY, 320, 170);
+
+        // Position NobleInventory to the left of ReserveInventory
+        int nobleX = reserveX + 340; // Adjust width + spacing
+        int nobleY = reserveY; // Align vertically with ReserveInventory
+        nobleInventory.setBounds(nobleX, nobleY, 550, 170);
 
         // Position player score labels
         int scoreLabelsHeight = TOKEN_INVENTORY_HEIGHT / playerCount;
@@ -274,6 +284,10 @@ public class SplendorGameScreen extends JPanel {
 
     public TokenManager getTokenManager() {
         return tokenManager;
+    }
+
+    public nobleInventory getNobleInventory(){
+        return nobleInventory;
     }
 
     public TokenInventory getCurrentPlayerInventory() {

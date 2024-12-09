@@ -9,8 +9,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class NobleLoader {
     private String file;
@@ -37,8 +37,7 @@ public class NobleLoader {
                 int onyxCost = Integer.parseInt(parts[5].trim());
                 String imageName = nobleName;
 
-                Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost,
-                        imageName);
+                Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost, imageName);
                 nobleList.add(noble);
             }
         } catch (IOException e) {
@@ -47,31 +46,27 @@ public class NobleLoader {
     }
 
     public JPanel createNobles() {
-        // Shuffle the list of nobles
         Collections.shuffle(nobleList);
-    
-        // Create a grid panel for nobles with 3x2 layout
+
         JPanel grid = new JPanel(new GridLayout(3, 2, 10, 15));
         grid.setOpaque(false);
-    
-        // Create a new stack with the top 6 nobles or all nobles if less than 6
+
         Stack<Noble> nobleStack = new Stack<>();
         int noblesCount = Math.min(5, nobleList.size());
         for (int i = 0; i < noblesCount; i++) {
             nobleStack.push(nobleList.get(i));
         }
-    
+
         while (!nobleStack.isEmpty()) {
             addNobleToGrid(grid, nobleStack);
         }
-    
-        // If fewer than 6 nobles, fill remaining slots with empty labels
+
         while (grid.getComponentCount() < 5) {
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
             emptyLabel.setPreferredSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
             grid.add(emptyLabel);
         }
-    
+
         return grid;
     }
 
@@ -125,8 +120,26 @@ public class NobleLoader {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                nobleClicked(label, noble, nobleStack, grid);
-                System.out.println("mouseClicked"); // remove later
+                Container parent = grid;
+                while (!(parent instanceof SplendorGameScreen) && parent != null) {
+                    parent = parent.getParent();
+                }
+
+                if (parent instanceof SplendorGameScreen) {
+                    SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
+
+                    // Check if this is the current player's turn
+                    int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
+                    if (currentPlayerIndex != gameScreen.getPlayerTurn()) {
+                        JOptionPane.showMessageDialog(grid,
+                                "It's not your turn to interact with the nobles.",
+                                "Not Your Turn",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    nobleClicked(label, noble, nobleStack, grid);
+                }
             }
 
             @Override
@@ -134,7 +147,6 @@ public class NobleLoader {
                 label.putClientProperty("hovered", true);
                 label.repaint();
             }
-
         });
 
         return label;
@@ -147,11 +159,9 @@ public class NobleLoader {
         if (choice == 0) {
             takeNoble(clickedLabel, noble, nobleStack, grid);
         }
-
     }
 
     private void takeNoble(JLabel clickedLabel, Noble noble, Stack<Noble> nobleStack, JPanel grid) {
-        // Locate the game screen
         Container parent = grid;
         while (!(parent instanceof SplendorGameScreen) && parent != null) {
             parent = parent.getParent();
@@ -161,9 +171,8 @@ public class NobleLoader {
             SplendorGameScreen gameScreen = (SplendorGameScreen) parent;
             TokenInventory tokenInventory = gameScreen.getPlayerInventory();
 
-            // Get the noble's cost and player's card bonuses
-            int[] nobleCosts = noble.getCost(); // Cost for each gem type
-            int[] playerBonuses = new int[] {
+            int[] nobleCosts = noble.getCost();
+            int[] playerBonuses = {
                     tokenInventory.getBonusCount("white"),
                     tokenInventory.getBonusCount("blue"),
                     tokenInventory.getBonusCount("green"),
@@ -179,23 +188,21 @@ public class NobleLoader {
                 }
             }
 
-            // Display that the player is not able to take the noble
             if (!canTakeNoble) {
-                JOptionPane.showMessageDialog(
-                        grid,
+                JOptionPane.showMessageDialog(grid,
                         "You do not have enough cards to take this noble.",
                         "Insufficient Resources",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Update player's score with the noble's prestige points
             int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
             gameScreen.updatePlayerScore(currentPlayerIndex, noble.getPrestige());
 
+            gameScreen.getNobleInventory().addNoble(noble);
+
             grid.remove(clickedLabel);
 
-            // If there are more nobles in the list, add a new noble to the grid
             if (!nobleStack.isEmpty()) {
                 addNobleToGrid(grid, nobleStack);
             } else {
@@ -203,7 +210,6 @@ public class NobleLoader {
                 grid.add(emptyLabel);
             }
 
-            // Revalidate and repaint the grid to update the UI
             grid.revalidate();
             grid.repaint();
 
@@ -211,7 +217,6 @@ public class NobleLoader {
         }
     }
 
-    // Getter method to access the list of nobles
     public ArrayList<Noble> getNobleList() {
         return nobleList;
     }

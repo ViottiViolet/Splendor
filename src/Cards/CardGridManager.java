@@ -281,9 +281,12 @@ public class CardGridManager {
                 TokenInventory tokenInventory = gameScreen.getPlayerInventory(); // Use getPlayerInventory instead
 
                 // Check if gold tokens are available
-                if (tokenManager.getTokenCount("gold") > 0) {
+                if (tokenManager.getTokenCount("gold") >= 0) {
                     // Add gold token to player's inventory
-                    tokenInventory.addToken("gold");
+                    if(tokenManager.getTokenCount("gold") != 0){
+                        tokenInventory.addToken("gold");
+                        gameScreen.getTokenManager().setPlayerTokenCount(1);
+                    }
                     // Decrease gold token count in token manager
                     tokenManager.decrementToken("gold");
                     // Add card to reserve
@@ -291,7 +294,7 @@ public class CardGridManager {
                     // Replace the card in grid
                     replaceCardInGrid(clickedLabel, cardStack, grid);
                     // increase token counter
-                    gameScreen.getTokenManager().setPlayerTokenCount(1);
+
                 } else {
                     JOptionPane.showMessageDialog(grid,
                             "No gold tokens available for reserving a card!",

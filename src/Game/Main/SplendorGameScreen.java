@@ -37,6 +37,7 @@ public class SplendorGameScreen extends JPanel {
 
     private final int playerCount;
     private JLabel playerNumberLabel;
+    private JLabel turnLabel;
     private int playerTurn = 0;
 
     // New fields for player scores
@@ -108,8 +109,15 @@ public class SplendorGameScreen extends JPanel {
         playerNumberLabel.setForeground(Color.WHITE);
         playerNumberLabel.setFont(new Font("Gothic", Font.BOLD, 25));
         playerNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        playerNumberLabel.setBounds(1400, 10, 100, 40);
+        playerNumberLabel.setBounds(1400, 10, 200, 40);
         this.add(playerNumberLabel);
+
+        turnLabel = new JLabel("Current Turn: " + (getPlayerTurn() + 1));
+        turnLabel.setForeground(Color.YELLOW);
+        turnLabel.setFont(new Font("Gothic", Font.BOLD, 15));
+        turnLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        turnLabel.setBounds(1405, 50, 200, 40);
+        this.add(turnLabel);
 
         reserveInventory = new ReserveInventory();
         add(reserveInventory);
@@ -299,10 +307,16 @@ public class SplendorGameScreen extends JPanel {
     public void nextPlayerTurn() {
         playerTurn = (playerTurn + 1) % playerCount;
         cycleInventory.showSpecificPlayer(playerTurn);
+
+        // Directly update the existing turnLabel instead of creating a new one
+        turnLabel.setText("Current Turn: " + (playerTurn + 1));
+
         transitionToEnd();
     }
 
     public CycleInventory getCycleInventory() {
         return cycleInventory;
     }
+
+
 }

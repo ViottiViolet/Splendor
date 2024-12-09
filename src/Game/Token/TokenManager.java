@@ -133,6 +133,15 @@ public class TokenManager {
 
 
             public void mouseClicked(MouseEvent e) {
+                if(tokensTakenInTurn.size() == 0){
+                    JOptionPane.showMessageDialog(
+                            tokenPanel,
+                            "No Tokens Selected",
+                            "Cannot Confirm Tokens",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
                 if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
                 tokensTakenInTurn.removeAll(tokensTakenInTurn);
                 gameScreen.nextPlayerTurn();

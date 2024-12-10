@@ -73,7 +73,7 @@ public class nobleInventory extends JPanel {
         int imageWidth = (panelWidth - (PADDING * (MAX_NOBLES + 1))) / MAX_NOBLES; // Divide panel space evenly
         int imageHeight = (int) (imageWidth * 1.4) - 20; // Maintain aspect ratio
 
-        ImageIcon nobleImage = new ImageIcon(new ImageIcon(noble.getImage())
+        ImageIcon nobleImage = new ImageIcon(new ImageIcon(getClass().getResource(noble.getImage()))
             .getImage()
             .getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH));
 

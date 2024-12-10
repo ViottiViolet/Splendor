@@ -13,7 +13,6 @@ import Game.Token.TokenManager;
 import Nobles.NobleLoader;
 import Game.Inventory.*;
 
-
 public class SplendorGameScreen extends JPanel {
     private final ImageIcon bImageIcon;
     private ImageIcon level1fd, level2fd, level3fd;
@@ -24,7 +23,6 @@ public class SplendorGameScreen extends JPanel {
     private JLabel totalTokensLabel;
     private JPanel nobleGridPanel; // Noble grid panel
     private nobleInventory nobleInventory; // Declare the NobleInventory
-
 
     private CycleInventory cycleInventory;
     private static final int TOKEN_INVENTORY_WIDTH = 900;
@@ -64,10 +62,10 @@ public class SplendorGameScreen extends JPanel {
         totalTokensLabel.setHorizontalAlignment(SwingConstants.LEFT);
         add(totalTokensLabel);
 
-        bImageIcon = new ImageIcon("src/Images/GameMenu/GameBackground.png");
-        level1fd = new ImageIcon("src/Images/Level1/L1BC.png");
-        level2fd = new ImageIcon("src/Images/Level2/L2BC.png");
-        level3fd = new ImageIcon("src/Images/Level3/L3BC.png");
+        bImageIcon = new ImageIcon(getClass().getResource("/Images/GameMenu/GameBackground.png"));
+        level1fd = new ImageIcon(getClass().getResource("/Images/Level1/L1BC.png"));
+        level2fd = new ImageIcon(getClass().getResource("/Images/Level2/L2BC.png"));
+        level3fd = new ImageIcon(getClass().getResource("/Images/Level3/L3BC.png"));
 
         level1Cards = cardLoader.getLevel1Cards();
         level2Cards = cardLoader.getLevel2Cards();
@@ -167,7 +165,8 @@ public class SplendorGameScreen extends JPanel {
         for (int i = 0; i < playerCount; i++) {
             JLabel scoreLabel = new JLabel("Player " + (i + 1) + ": 0");
             scoreLabel.setForeground(Color.WHITE);
-            if (i == 0) scoreLabel.setForeground(Color.YELLOW);
+            if (i == 0)
+                scoreLabel.setForeground(Color.YELLOW);
             scoreLabel.setFont(new Font("Gothic", Font.BOLD, 20));
             scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
             add(scoreLabel);
@@ -180,9 +179,9 @@ public class SplendorGameScreen extends JPanel {
         for (int i = 0; i < playerScoreLabels.size(); i++) {
             JLabel scoreLabel = playerScoreLabels.get(i);
             if (i == currentPlayerIndex) {
-                scoreLabel.setForeground(Color.YELLOW);  // Highlight current player's score
+                scoreLabel.setForeground(Color.YELLOW); // Highlight current player's score
             } else {
-                scoreLabel.setForeground(Color.WHITE);   // Normal color for other players
+                scoreLabel.setForeground(Color.WHITE); // Normal color for other players
             }
         }
     }
@@ -192,7 +191,8 @@ public class SplendorGameScreen extends JPanel {
         if (playerIndex >= 0 && playerIndex < playerScores.size()) {
             // Update the score
             playerScores.set(playerIndex, playerScores.get(playerIndex) + prestigePoints);
-            playerScoreLabels.get(playerIndex).setText("Player " + (playerIndex + 1) + ": " + playerScores.get(playerIndex));
+            playerScoreLabels.get(playerIndex)
+                    .setText("Player " + (playerIndex + 1) + ": " + playerScores.get(playerIndex));
 
             // Check if the current player has won
             checkForWinner(playerIndex);
@@ -210,8 +210,7 @@ public class SplendorGameScreen extends JPanel {
         }
     }
 
-    private void transitionToEnd()
-    {
+    private void transitionToEnd() {
 
         if (gameEnd && playerTurn == 0) {
             // Player has won - close the game window and open end screen
@@ -236,27 +235,27 @@ public class SplendorGameScreen extends JPanel {
 
     private void updateGridPositions() {
         int gridX = (getWidth() - GRID_WIDTH) / 2;
-    
+
         tokenManager.setTokenPanelBounds(gridX - 100, 5, GRID_WIDTH + 200, TOKEN_PANEL_HEIGHT);
-    
+
         gridPanel3.setBounds(gridX - 150, 150, GRID_WIDTH, GRID_HEIGHT);
         gridPanel2.setBounds(gridX - 150, 135 + GRID_HEIGHT + VERTICAL_GAP - 5, GRID_WIDTH, GRID_HEIGHT);
         gridPanel1.setBounds(gridX - 150, 110 + (GRID_HEIGHT + VERTICAL_GAP) * 2, GRID_WIDTH, GRID_HEIGHT);
-    
+
         int nobleGridX = gridX + GRID_WIDTH - 100;
         int nobleGridY = 150;
         int nobleGridWidth = 2 * (NobleLoader.NOBLE_WIDTH + 10) + 10; // Account for horizontal gap
         int nobleGridHeight = 3 * (NobleLoader.NOBLE_HEIGHT + 15) + 15; // Account for vertical gap
         nobleGridPanel.setBounds(nobleGridX, nobleGridY, nobleGridWidth, nobleGridHeight);
-    
+
         int totalGridHeight = TOKEN_PANEL_HEIGHT + (GRID_HEIGHT + VERTICAL_GAP) * 3;
-    
+
         int inventoryX = (getWidth() - TOKEN_INVENTORY_WIDTH) / 2;
         int inventoryY = totalGridHeight + 30;
-    
+
         totalTokensLabel.setBounds(inventoryX, inventoryY - 30, TOKEN_INVENTORY_WIDTH, 25);
         cycleInventory.setBounds(inventoryX, inventoryY, TOKEN_INVENTORY_WIDTH, TOKEN_INVENTORY_HEIGHT);
-    
+
         int reserveX = (getWidth() - TOKEN_INVENTORY_WIDTH) / 2;
         int reserveY = cycleInventory.getY() + cycleInventory.getHeight() + 10;
         reserveInventory.setBounds(reserveX, reserveY, 320, 170);
@@ -274,7 +273,6 @@ public class SplendorGameScreen extends JPanel {
             scoreLabel.setBounds(100, inventoryY + i * scoreLabelsHeight - 500, scoreLabelsWidth, 30);
         }
     }
-    
 
     public TokenInventory getPlayerInventory() {
         return cycleInventory.getInventory();
@@ -294,7 +292,7 @@ public class SplendorGameScreen extends JPanel {
         return tokenManager;
     }
 
-    public nobleInventory getNobleInventory(){
+    public nobleInventory getNobleInventory() {
         return nobleInventory;
     }
 
@@ -302,7 +300,9 @@ public class SplendorGameScreen extends JPanel {
         return cycleInventory.getInventory();
     }
 
-    public int getPlayerTurn() { return playerTurn; }
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
 
     public void nextPlayerTurn() {
         playerTurn = (playerTurn + 1) % playerCount;
@@ -317,6 +317,5 @@ public class SplendorGameScreen extends JPanel {
     public CycleInventory getCycleInventory() {
         return cycleInventory;
     }
-
 
 }

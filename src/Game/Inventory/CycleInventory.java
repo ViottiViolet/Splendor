@@ -29,8 +29,8 @@ public class CycleInventory extends JPanel {
         setOpaque(false);
         
         // Initialize navigation arrows with proper scaling
-        ImageIcon leftIcon = new ImageIcon("src/Images/MiscellaneousImages/LeftArrow.png");
-        ImageIcon rightIcon = new ImageIcon("src/Images/MiscellaneousImages/RightArrow.png");
+        ImageIcon leftIcon = new ImageIcon(getClass().getResource("/Images/MiscellaneousImages/LeftArrow.png"));
+        ImageIcon rightIcon = new ImageIcon(getClass().getResource("/Images/MiscellaneousImages/RightArrow.png"));
         
         // Scale the images to the desired size while maintaining aspect ratio
         Image leftImg = leftIcon.getImage().getScaledInstance(ARROW_SIZE, ARROW_SIZE, Image.SCALE_SMOOTH);

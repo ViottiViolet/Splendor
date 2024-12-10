@@ -80,7 +80,7 @@ public class ReserveInventory extends JPanel {
         }
 
         currentPlayerCards.add(card);
-        ImageIcon cardImage = new ImageIcon(new ImageIcon(card.getIllustration())
+        ImageIcon cardImage = new ImageIcon(new ImageIcon(getClass().getResource(card.getIllustration()))
                 .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
         
         JLabel cardLabel = new JLabel(cardImage) {
@@ -309,10 +309,6 @@ public class ReserveInventory extends JPanel {
         repaint();
     }
 
-// Modified to switch to the new player instead of clearing
-//    public void resetForNewPlayer() {
-//        switchToPlayer(currentPlayerIndex);
-//    }
 
     @Override
     protected void paintComponent(Graphics g) {

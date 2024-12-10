@@ -72,7 +72,7 @@ public class TokenManager {
 
         for (String color : tokenColors) {
             // Load and resize images
-            ImageIcon originalIcon = new ImageIcon("src/Images/Tokens/" + color + ".png");
+            ImageIcon originalIcon = new ImageIcon(getClass().getResource("/Images/Tokens/" + color + ".png"));
             normalIcons.put(color, resizeImageIcon(originalIcon, TOKEN_SIZE, TOKEN_SIZE));
 
             int hoverSize = (int) (TOKEN_SIZE * HOVER_SCALE);

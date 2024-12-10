@@ -31,7 +31,7 @@ public class GameEndScreen extends JFrame {
         backgroundPanel.setLayout(new BorderLayout());
 
         // Load background image
-        backgroundImage = new ImageIcon("src/Images/GameMenu/GameBackground.png");
+        backgroundImage = new ImageIcon(getClass().getResource("/Images/GameMenu/GameBackground.png"));
 
         // Create winner label
         JLabel winnerLabel = new JLabel("Player " + winningPlayerNumber + " Wins!");

@@ -9,6 +9,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class nobleInventory extends JPanel {
     private static final int MAX_NOBLES = 5; // Maximum number of nobles displayed per player
@@ -30,16 +31,16 @@ public class nobleInventory extends JPanel {
         currentPlayerIndex = 0;
 
         TitledBorder border = BorderFactory.createTitledBorder(
-            BorderFactory.createEmptyBorder(),
-            "Noble Cards",
-            TitledBorder.LEFT,
-            TitledBorder.TOP,
-            new Font("Gothic", Font.BOLD, 16),
-            new Color(220, 220, 220)
+                BorderFactory.createEmptyBorder(),
+                "Noble Cards",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Gothic", Font.BOLD, 16),
+                new Color(220, 220, 220)
         );
         setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING),
-            border
+                BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING),
+                border
         ));
 
         setPreferredSize(new Dimension(500, 200)); // Adjust width and height as needed
@@ -58,10 +59,10 @@ public class nobleInventory extends JPanel {
 
         if (currentPlayerNobles.size() >= MAX_NOBLES) {
             JOptionPane.showMessageDialog(
-                this,
-                "Maximum number of nobles reached for the player.",
-                "Cannot Add Noble",
-                JOptionPane.WARNING_MESSAGE
+                    this,
+                    "Maximum number of nobles reached for the player.",
+                    "Cannot Add Noble",
+                    JOptionPane.WARNING_MESSAGE
             );
             return;
         }
@@ -73,9 +74,9 @@ public class nobleInventory extends JPanel {
         int imageWidth = (panelWidth - (PADDING * (MAX_NOBLES + 1))) / MAX_NOBLES; // Divide panel space evenly
         int imageHeight = (int) (imageWidth * 1.4) - 20; // Maintain aspect ratio
 
-        ImageIcon nobleImage = new ImageIcon(new ImageIcon(getClass().getResource(noble.getImage()))
-            .getImage()
-            .getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH));
+        ImageIcon nobleImage = new ImageIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(noble.getImage())))
+                .getImage()
+                .getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH));
 
         JLabel nobleLabel = new JLabel(nobleImage) {
             @Override
@@ -141,16 +142,16 @@ public class nobleInventory extends JPanel {
         int height = getHeight();
 
         GradientPaint gradient = new GradientPaint(
-            0, 0, new Color(0, 0, 0, 160),
-            0, height, new Color(0, 0, 0, 140)
+                0, 0, new Color(0, 0, 0, 160),
+                0, height, new Color(0, 0, 0, 140)
         );
         g2d.setPaint(gradient);
 
         RoundRectangle2D roundedRect = new RoundRectangle2D.Float(
-            BORDER_THICKNESS, BORDER_THICKNESS,
-            width - 2 * BORDER_THICKNESS,
-            height - 2 * BORDER_THICKNESS,
-            CORNER_RADIUS, CORNER_RADIUS
+                BORDER_THICKNESS, BORDER_THICKNESS,
+                width - 2 * BORDER_THICKNESS,
+                height - 2 * BORDER_THICKNESS,
+                CORNER_RADIUS, CORNER_RADIUS
         );
         g2d.fill(roundedRect);
 

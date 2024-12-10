@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Stack;
 
 public class CardGridManager {
@@ -40,7 +41,7 @@ public class CardGridManager {
     private void addCardToGrid(JPanel grid, Stack<Card> cardStack) {
         if (!cardStack.isEmpty()) {
             Card card = cardStack.pop();
-            ImageIcon cardImage = new ImageIcon(new ImageIcon(card.getIllustration())
+            ImageIcon cardImage = new ImageIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(card.getIllustration())))
                     .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
             JLabel cardLabel = createClickableLabel(cardImage, card, cardStack, grid);
             grid.add(cardLabel);
@@ -316,7 +317,7 @@ public class CardGridManager {
     private void replaceCardInGrid(JLabel clickedLabel, Stack<Card> cardStack, JPanel grid) {
         if (!cardStack.isEmpty()) {
             Card newCard = cardStack.pop();
-            ImageIcon newCardImage = new ImageIcon(new ImageIcon(newCard.getIllustration())
+            ImageIcon newCardImage = new ImageIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(newCard.getIllustration())))
                     .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
 
             JLabel newCardLabel = createClickableLabel(newCardImage, newCard, cardStack, grid);

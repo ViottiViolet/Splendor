@@ -289,10 +289,10 @@ public class TokenManager {
                 if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
                 if (totalTokenCount >= MAX_TOKENS) {
                     JOptionPane.showMessageDialog(
-                        tokenPanel,
-                        "Cannot choose more tokens. Maximum limit (10/10) reached!",
-                        "Token Limit Reached",
-                        JOptionPane.WARNING_MESSAGE
+                            tokenPanel,
+                            "Cannot choose more tokens. Maximum limit (10/10) reached!",
+                            "Token Limit Reached",
+                            JOptionPane.WARNING_MESSAGE
                     );
                     return;
                 }
@@ -482,7 +482,7 @@ public class TokenManager {
         // Trigger repaint for the visual update
         countLabel.repaint();
     }
-    
+
     // Add method to get token count for a specific player
     public int getPlayerTokenCount(int playerIndex) {
         return playerTokenCounts.getOrDefault(playerIndex, 0);
@@ -502,6 +502,6 @@ public class TokenManager {
 
     public ArrayList<String> getTokensTakenInTurn()
     {
-           return tokensTakenInTurn;
+        return tokensTakenInTurn;
     }
 }

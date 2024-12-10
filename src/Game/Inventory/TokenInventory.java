@@ -39,11 +39,11 @@ public class TokenInventory extends JPanel {
             tokens.put("black", 0);
             tokens.put("gold", 0);
 
-            bonuses.put("white", 0);
-            bonuses.put("blue", 0);
-            bonuses.put("green", 0);
-            bonuses.put("red", 0);
-            bonuses.put("black", 0);
+            bonuses.put("white", 5);
+            bonuses.put("blue", 5);
+            bonuses.put("green", 5);
+            bonuses.put("red", 5);
+            bonuses.put("black", 5);
 
             playerTokens.put(i, tokens);
             playerBonuses.put(i, bonuses);

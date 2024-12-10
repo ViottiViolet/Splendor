@@ -17,12 +17,12 @@ public class ReserveInventory extends JPanel {
     private static final int MAX_RESERVED_CARDS = 3;
     private static final int CORNER_RADIUS = 15;
     private static final float BORDER_THICKNESS = 2.0f;
-    
+
     // Store reserved cards for each player
     private final Map<Integer, ArrayList<Card>> playerReservedCards;
     private final Map<Integer, ArrayList<JLabel>> playerCardLabels;
     private int currentPlayerIndex;
-    
+
     public ReserveInventory() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(false);
@@ -33,22 +33,22 @@ public class ReserveInventory extends JPanel {
         currentPlayerIndex = 0;
 
         TitledBorder border = BorderFactory.createTitledBorder(
-            BorderFactory.createEmptyBorder(),
-            "Reserved Cards",
-            TitledBorder.LEFT,
-            TitledBorder.TOP,
-            new Font("Gothic", Font.BOLD, 16),
-            new Color(220, 220, 220)
+                BorderFactory.createEmptyBorder(),
+                "Reserved Cards",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Gothic", Font.BOLD, 16),
+                new Color(220, 220, 220)
         );
         setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(5, 5, 5, 5),
-            border
+                BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                border
         ));
 
         // Panel for cards with padding
         JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         cardsPanel.setOpaque(false);
-        
+
         add(Box.createVerticalGlue());
         add(cardsPanel);
         add(Box.createVerticalGlue());
@@ -73,16 +73,16 @@ public class ReserveInventory extends JPanel {
 
         if (!canReserveCard()) {
             JOptionPane.showMessageDialog(this,
-                "Maximum reserved cards limit reached (3 cards)",
-                "Cannot Reserve Card",
-                JOptionPane.WARNING_MESSAGE);
+                    "Maximum reserved cards limit reached (3 cards)",
+                    "Cannot Reserve Card",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         currentPlayerCards.add(card);
-        ImageIcon cardImage = new ImageIcon(new ImageIcon(getClass().getResource(card.getIllustration()))
+        ImageIcon cardImage = new ImageIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(card.getIllustration())))
                 .getImage().getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH));
-        
+
         JLabel cardLabel = new JLabel(cardImage) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -93,7 +93,7 @@ public class ReserveInventory extends JPanel {
                 super.paintComponent(g);
             }
         };
-        
+
         cardLabel.setPreferredSize(new Dimension(CARD_WIDTH, CARD_HEIGHT));
         cardLabel.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180, 100), 1));
         currentPlayerLabels.add(cardLabel);
@@ -116,7 +116,7 @@ public class ReserveInventory extends JPanel {
                 cardLabel.repaint();
             }
         });
-        
+
         ((JPanel)getComponent(1)).add(cardLabel);
         revalidate();
         repaint();
@@ -287,14 +287,14 @@ public class ReserveInventory extends JPanel {
     private void refreshDisplay() {
         JPanel cardsPanel = (JPanel)getComponent(1);
         cardsPanel.removeAll();
-        
+
         ensurePlayerStorageExists(currentPlayerIndex);
         ArrayList<JLabel> currentPlayerLabels = playerCardLabels.get(currentPlayerIndex);
-        
+
         for (JLabel label : currentPlayerLabels) {
             cardsPanel.add(label);
         }
-        
+
         revalidate();
         repaint();
     }
@@ -314,7 +314,7 @@ public class ReserveInventory extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        
+
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -322,16 +322,16 @@ public class ReserveInventory extends JPanel {
         int height = getHeight();
 
         GradientPaint gradient = new GradientPaint(
-            0, 0, new Color(0, 0, 0, 160),
-            0, height, new Color(0, 0, 0, 140)
+                0, 0, new Color(0, 0, 0, 160),
+                0, height, new Color(0, 0, 0, 140)
         );
         g2d.setPaint(gradient);
 
         RoundRectangle2D roundedRect = new RoundRectangle2D.Float(
-            BORDER_THICKNESS, BORDER_THICKNESS,
-            width - 2 * BORDER_THICKNESS,
-            height - 2 * BORDER_THICKNESS,
-            CORNER_RADIUS, CORNER_RADIUS
+                BORDER_THICKNESS, BORDER_THICKNESS,
+                width - 2 * BORDER_THICKNESS,
+                height - 2 * BORDER_THICKNESS,
+                CORNER_RADIUS, CORNER_RADIUS
         );
         g2d.fill(roundedRect);
 

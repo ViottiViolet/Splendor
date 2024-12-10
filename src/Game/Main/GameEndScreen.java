@@ -48,7 +48,7 @@ public class GameEndScreen extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Close the end screen
                 dispose();
-                
+
                 // Create a new MainClass instance and restart the game
                 MainClass game = new MainClass();
                 game.preloadAssets();

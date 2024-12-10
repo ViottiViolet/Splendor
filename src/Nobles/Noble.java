@@ -12,7 +12,7 @@ public class Noble {
         this.emeraldCost = emeraldCost;
         this.rubyCost = rubyCost;
         this.onyxCost = onyxCost;
-        this.imageName = "src/Images/Nobles/" + imageName + ".png";
+        this.imageName = "/Images/Nobles/" + imageName + ".png";
     }
 
     public int getPrestige(){return 3;}
@@ -30,4 +30,5 @@ public class Noble {
     public String getImage(){
         return imageName;
     }
+
 }

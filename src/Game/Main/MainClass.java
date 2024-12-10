@@ -26,7 +26,7 @@ public class MainClass {
 
         try {
             // Pre-load card data
-            cardLoader = new CardLoader("src/Cards/CardData.txt");
+            cardLoader = new CardLoader("C:/Users/k2208617/Desktop/Kush CS3/SplendorGame/src/Cards/CardData.txt");
 
             // Initialize game screen
             gameScreen = new SplendorGameScreen(cardLoader, playerCount);

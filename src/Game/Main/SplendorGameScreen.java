@@ -128,7 +128,7 @@ public class SplendorGameScreen extends JPanel {
         addPlayerScoreLabels();
 
         // Noble Loader setup
-        NobleLoader nobleLoader = new NobleLoader("C:/Users/k2208617/Desktop/Kush CS3/SplendorGame/src/Nobles/NobleData.txt");
+        NobleLoader nobleLoader = new NobleLoader("NobleData.txt");
         nobleLoader.loadNobles();
 
         // Create the noble grid panel

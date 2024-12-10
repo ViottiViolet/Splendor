@@ -1,8 +1,9 @@
 package Cards;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Stack;
 
 public class CardLoader {
@@ -15,7 +16,8 @@ public class CardLoader {
     }
 
     private void loadCards(String filename) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                Objects.requireNonNull(getClass().getResourceAsStream("/Cards/" + filename))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\t");

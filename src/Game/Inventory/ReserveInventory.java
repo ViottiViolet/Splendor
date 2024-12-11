@@ -138,6 +138,17 @@ public class ReserveInventory extends JPanel {
                 );
                 return;
             }
+
+                // Check if this is the current player's turn
+                int currentPlayerIndex = gameScreen.getCycleInventory().getCurrentPlayerIndex();
+                if (currentPlayerIndex != gameScreen.getPlayerTurn()) {
+                    JOptionPane.showMessageDialog(this,
+                            "These are not your reserved cards.",
+                            "Not Your Turn",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
         }
         String[] options = { "Buy", "Cancel" };
         int choice = JOptionPane.showOptionDialog(this,

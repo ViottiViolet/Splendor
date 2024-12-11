@@ -287,13 +287,27 @@ public class TokenManager {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (gameScreen.getPlayerTurn() != gameScreen.getCycleInventory().getCurrentPlayerIndex()) return;
-                if (totalTokenCount >= MAX_TOKENS) {
-                    JOptionPane.showMessageDialog(
-                            tokenPanel,
-                            "Cannot choose more tokens. Maximum limit (10/10) reached!",
+                if (totalTokenCount >= MAX_TOKENS && availableTokens.get(color) > 0) {
+                    String[] options = {"white", "blue", "green", "red", "black"};
+
+                    int choice = JOptionPane.showOptionDialog(tokenPanel,
+                            "Token limit reached. Select a token to return.",
                             "Token Limit Reached",
-                            JOptionPane.WARNING_MESSAGE
-                    );
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null, options, options[0]);
+
+                    if (choice != JOptionPane.CLOSED_OPTION) {
+                        String chosenColor = options[choice];
+                        if(currentPlayerInventory.getTokenCount(chosenColor) > 0) {
+                            addToken(chosenColor, 1);
+                            currentPlayerInventory.removeToken(chosenColor, 1);
+                            setCurrentPlayerInventory(currentPlayerInventory);
+                            totalTokenCount--;
+                            playerTokenCounts.put(currentPlayer, totalTokenCount);
+                            gameScreen.updateTotalTokensLabel(totalTokenCount);
+                        }
+                    }
                     return;
                 }
 

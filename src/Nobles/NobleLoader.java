@@ -73,18 +73,14 @@ public class NobleLoader {
     private void addNobleToGrid(JPanel grid, Stack<Noble> nobleStack) {
         if (!nobleStack.isEmpty()) {
             Noble noble = nobleStack.pop();
-            try {
-                BufferedImage nobleImage = ImageIO.read(new File(noble.getImage())); // Load the image
-                ImageIcon nobleIcon = new ImageIcon(nobleImage.getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
-                JLabel nobleLabel = createClickableLabel(nobleIcon, noble, nobleStack, grid);
-                grid.add(nobleLabel);
-            } catch (IOException e) {
-                e.printStackTrace();
-                JLabel errorLabel = new JLabel("Image Load Error", SwingConstants.CENTER);
-                grid.add(errorLabel);
-            }
+            ImageIcon nobleImage = new ImageIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource(noble.getImage())))
+                    .getImage().getScaledInstance(NOBLE_WIDTH, NOBLE_HEIGHT, Image.SCALE_SMOOTH));
+
+            JLabel nobleLabel = createClickableLabel(nobleImage, noble, nobleStack, grid);
+            grid.add(nobleLabel);
         } else {
             JLabel emptyLabel = new JLabel("Empty Slot", SwingConstants.CENTER);
+            emptyLabel.setPreferredSize(new Dimension(NOBLE_WIDTH, NOBLE_HEIGHT));
             grid.add(emptyLabel);
         }
     }

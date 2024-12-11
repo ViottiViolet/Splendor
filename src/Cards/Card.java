@@ -17,11 +17,11 @@ public class Card {
     private final int onyxCost;
 
     public Card(int level, int prestige, String illustration, int diamondBonus, int sapphireBonus, int emeraldBonus,
-            int rubyBonus, int onyxBonus, int diamondCost, int sapphireCost, int emeraldCost,
-            int rubyCost, int onyxCost) {
+                int rubyBonus, int onyxBonus, int diamondCost, int sapphireCost, int emeraldCost,
+                int rubyCost, int onyxCost) {
         this.level = level;
         this.prestige = prestige;
-        this.illustration = "src/Images/Level" + level + "/" + illustration + ".png";
+        this.illustration = "/Images/Level" + level + "/" + illustration + ".png";
         this.diamondBonus = diamondBonus;
         this.sapphireBonus = sapphireBonus;
         this.emeraldBonus = emeraldBonus;

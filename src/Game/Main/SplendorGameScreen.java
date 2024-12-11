@@ -47,7 +47,7 @@ public class SplendorGameScreen extends JPanel {
     private int winnerIndex = 0;
     private boolean gameEnd = false;
 
-    public SplendorGameScreen(CardLoader cardLoader, int playerCount) {
+    public SplendorGameScreen(CardLoader cardLoader, int playerCount) throws IOException {
         this.playerCount = playerCount;
 
         // Initialize player scores
@@ -128,12 +128,8 @@ public class SplendorGameScreen extends JPanel {
         addPlayerScoreLabels();
 
         // Noble Loader setup
-        NobleLoader nobleLoader = new NobleLoader("src/Nobles/NobleData.txt");
-        try {
-            nobleLoader.loadNobles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        NobleLoader nobleLoader = new NobleLoader("NobleData.txt");
+        nobleLoader.loadNobles();
 
         // Create the noble grid panel
         nobleGridPanel = nobleLoader.createNobles();

@@ -13,19 +13,19 @@ import java.io.*;
 import java.util.*;
 
 public class NobleLoader {
-    private String file;
     private ArrayList<Noble> nobleList;
     public static final int NOBLE_WIDTH = 165;
     public static final int NOBLE_HEIGHT = 165;
     private static final float HOVER_SCALE = 1.08f;
 
-    public NobleLoader(String file) {
-        this.file = file;
-        this.nobleList = new ArrayList<>();
+    public NobleLoader(String file) throws IOException {
+        this.nobleList = new ArrayList<>();  // Initialize the list first
+        loadNobles(file);  // Then load nobles into the list
     }
 
-    public void loadNobles() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+    public void loadNobles(String filename) throws IOException {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                Objects.requireNonNull(getClass().getResourceAsStream("/Nobles/" + filename))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split("\t");
@@ -38,7 +38,7 @@ public class NobleLoader {
                 String imageName = nobleName;
 
                 Noble noble = new Noble(nobleName, diamondCost, sapphireCost, emeraldCost, rubyCost, onyxCost, imageName);
-                nobleList.add(noble);
+                this.nobleList.add(noble);  // Use this.nobleList explicitly
             }
         } catch (IOException e) {
             e.printStackTrace();

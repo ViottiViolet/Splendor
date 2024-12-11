@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Splendor:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Splendor_jar</output-path>
+    <root id="archive" name="Splendor.jar">
+      <element id="module-output" name="Splendor" />
+    </root>
+  </artifact>
+</component>

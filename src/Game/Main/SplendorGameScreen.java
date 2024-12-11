@@ -129,7 +129,6 @@ public class SplendorGameScreen extends JPanel {
 
         // Noble Loader setup
         NobleLoader nobleLoader = new NobleLoader("NobleData.txt");
-        nobleLoader.loadNobles();
 
         // Create the noble grid panel
         nobleGridPanel = nobleLoader.createNobles();
